@@ -1,5 +1,6 @@
 # xmu-daily-form
 厦大Daily Health Report 健康打卡自动填写脚本
+**声明：使用该项目造成的一切后果本人概不负责**
 
 ## 缘由
 昨天刚接触到selenium，觉得有趣，写一个简单的项目练练手
