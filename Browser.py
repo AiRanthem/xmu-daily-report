@@ -69,8 +69,7 @@ class Browser:
         self.load_cookie()
         if self.driver.current_url != self.APP_URL:
             self.login()
-        else:
-            self.fill()
+        self.fill()
 
     # def __del__(self):
         # self.driver.close()

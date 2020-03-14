@@ -4,12 +4,14 @@
 
 ## 缘由
 昨天刚接触到selenium，觉得有趣，写一个简单的项目练练手
-## 状态：ver 0.1
-版本0.1，该脚本属于可用状态，我今天的表格就是用这个它填的（逃）
+## 状态：ver 0.2
+版本0.2，该脚本属于可用状态，我今天的表格就是用这个它填的（逃）
 
 由于这个系统登陆方式错综复杂（可能只有我是用第二个按钮登陆的），暂时没有做自动登录功能。第一次使用需要手动登录。
 
 最后需要用户确认提交，暂时没有做自动确认，后续版本会补上自动确认和自动登录功能。
+
+BUG fix: fix the bug that the script stops after user logged in
 ## How to Use
 ```bash
 git clone git@github.com:AiRanthem/xmu-daily-form.git
@@ -31,12 +33,12 @@ python main.py
 
 5. 如果你的版本号不是80，请访问[这里](https://sites.google.com/a/chromium.org/chromedriver/downloads)下载对应版本的chromedriver，替换掉[driver](./driver)文件夹里的`chromedriver.exe`(没有后缀名的那个是Linux版，开发用的，可以删除)
 5. 回到[xmu-daily-form](.)中，和第三步一样运行[how_to_use.py](./how_to_use.py)即可。
-## update 0.1
-1. 完成自动登录校验
-2. 完成自动表格填写
+## update 0.2
+1. BUG fix: fix the bug that the script stops after user logged in
 3. todo：自动提交和手动提交的切换
 4. todo：自动登录
 
 ## log
-+ 2020/3/13：施工开始
++ 2020/3/13: 施工开始
 + 2020/3/13: 完成0.1版本
++ 2020/3/14: version 0.2 update, bug fix
