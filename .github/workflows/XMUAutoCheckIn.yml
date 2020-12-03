@@ -8,6 +8,9 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
+  schedule:
+    - cron: '30 1 * * *'
+    # cron表达式，Actions时区是UTC时间，所以上午9点要往前推8个小时
 
 jobs:
   build:
@@ -26,13 +29,14 @@ jobs:
         pip install selenium
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Setup Chromedriver
-      uses: nanasess/setup-chromedriver@master
+      uses: actions/setup-chromedriver@v2
       with:
         # Optional: do not specify to match Chrome's version
         chromedriver-version: '77.0.3865.40'
     - name: Run the CheckIn Sehll
       run: |
-        export DISPLAY=:99
+        # export DISPLAY=:99
         # chromedriver --url-base=/wd/hub &
-        sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
-        python XMUAutoCheckIn.py
+        # sudo Xvfb -ac :99 -screen 0 1280x1024x24 > /dev/null 2>&1 & # optional
+        # python XMUAutoCheckIn.py
+        ./XMUAutoCheckIn.sh
