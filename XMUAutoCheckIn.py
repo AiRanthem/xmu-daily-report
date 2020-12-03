@@ -40,15 +40,17 @@ def checkin(a, b):
     d.send_keys(b)
 
     # 登录
-    while 1:
-        start = time.clock()
-        try:
-            driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]").click()
-            print("已定位到元素")
-            end=time.clock()
-            break
-        except:
-            print("还未定位到元素!")
+#     while 1:
+#         start = time.clock()
+#         try:
+#             driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]").click()
+#             print("已定位到元素")
+#             end=time.clock()
+#             break
+#         except:
+#             print("还未定位到元素!")
+    login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
+    login.click()
     
 
     driver.get('https://xmuxg.xmu.edu.cn/app/214')
