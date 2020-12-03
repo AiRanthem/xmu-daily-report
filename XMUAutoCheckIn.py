@@ -42,15 +42,16 @@ def checkin(a, b):
 
     # 输入用户名密码
     time.sleep(0.2)
+    login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
     c = driver.find_element_by_id('username')
     d = driver.find_element_by_id('password')
     c.send_keys(a)
     d.send_keys(b)
-    
+
     # 点击登录
-    login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
+    # login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
     login.click()
-    
+
     # 重新跳转到打卡页面
     driver.get(Checkin_URL)
 
@@ -127,6 +128,6 @@ def main():
     a = os.environ['USERNAME'].split('#')
     b = os.environ['PASSWD'].split('#')
     logger.info(checkin(a, b))
-   
+
 if __name__ == '__main__':
     main()
