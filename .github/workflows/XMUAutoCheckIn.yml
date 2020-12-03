@@ -32,7 +32,7 @@ jobs:
       uses: actions/setup-chromedriver@v2
       with:
         # Optional: do not specify to match Chrome's version
-        chromedriver-version: '77.0.3865.40'
+        chromedriver-version: '87.0.4280.88'
     - name: Run the CheckIn Sehll
       run: |
         # export DISPLAY=:99
