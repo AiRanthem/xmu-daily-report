@@ -7,15 +7,15 @@ import time
 # chrome_options.add_argument('--disable-dev-shm-usage')
 # chrome_options.add_argument('--headless')
 
-logfile = '/tmp/XMUAutoCheckIn.log'
-userfile = '/home/sigurd/Scripts/XMUAutoCheckIn/users'
+logfile = 'XMUAutoCheckIn.log'
+userfile = 'users'
 url = 'https://xmuxg.xmu.edu.cn/login'
 # url = 'https://ids.xmu.edu.cn/authserver/login?service=https://xmuxg.xmu.edu.cn/login/cas/xmu'
-chromedriver = '/usr/bin/chromedriver'
+# chromedriver = '/usr/bin/chromedriver'
 
 
 def daka(a, b):
-    driver = webdriver.Chrome(chromedriver)
+    driver = webdriver.Chrome()
     run = True
     now = time.time()
     while run:
