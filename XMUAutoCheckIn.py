@@ -14,7 +14,7 @@ url = 'https://xmuxg.xmu.edu.cn/login'
 # chromedriver = '/usr/bin/chromedriver'
 
 
-def daka(a, b):
+def checkin(a, b):
     driver = webdriver.Chrome()
     run = True
     now = time.time()
@@ -40,8 +40,10 @@ def daka(a, b):
     d.send_keys(b)
 
     # 登录
+    time.sleep(1)
     driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]").click()
 
+    time.sleep(0.2)
     driver.get('https://xmuxg.xmu.edu.cn/app/214')
 
     now = time.time()
@@ -120,7 +122,7 @@ with open(userfile, 'r') as users:
         if line[0] == '#':
             continue
         a, b = line.split(' ')
-        output = daka(a, b)
+        output = checkin(a, b)
 
         cur_time = (time.strftime('%Y_%m_%d_%r', time.localtime(time.time())))
         with open(logfile, 'a') as log:
