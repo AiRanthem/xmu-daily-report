@@ -1,5 +1,6 @@
 from selenium import webdriver
 import time
+import logging
 
 # from selenium.webdriver.chrome.options import Options
 # chrome_options = Options()
@@ -7,11 +8,15 @@ import time
 # chrome_options.add_argument('--disable-dev-shm-usage')
 # chrome_options.add_argument('--headless')
 
-logfile = 'XMUAutoCheckIn.log'
-userfile = 'users'
-url = 'https://xmuxg.xmu.edu.cn/login'
-# url = 'https://ids.xmu.edu.cn/authserver/login?service=https://xmuxg.xmu.edu.cn/login/cas/xmu'
-# chromedriver = '/usr/bin/chromedriver'
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
+
+Login_URL = 'https://xmuxg.xmu.edu.cn/login'
+Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
+
+# VARIABLE NAME
+USERNAME = "username"
+PASSWD = "passwd"
 
 
 def checkin(a, b):
@@ -20,10 +25,11 @@ def checkin(a, b):
     now = time.time()
     while run:
         try:
-            driver.get(url)
+            logger.info("进入登录页面")
+            driver.get(Login_URL)
             break
         except:
-            print(url, "获取失败，重试中")
+            logger.info(url, "获取失败，重试中")
             if (time.time() - now) > 10:
                 run = False
                 return '网页登陆失败'
@@ -33,27 +39,19 @@ def checkin(a, b):
     login = driver.find_element_by_xpath("//*[@class='buttonBox']/button[2]")
     login.click()
 
+    # 输入用户名密码
     time.sleep(0.2)
     c = driver.find_element_by_id('username')
     d = driver.find_element_by_id('password')
     c.send_keys(a)
     d.send_keys(b)
-
-    # 登录
-#     while 1:
-#         start = time.clock()
-#         try:
-#             driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]").click()
-#             print("已定位到元素")
-#             end=time.clock()
-#             break
-#         except:
-#             print("还未定位到元素!")
+    
+    # 点击登录
     login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
     login.click()
     
-
-    driver.get('https://xmuxg.xmu.edu.cn/app/214')
+    # 重新跳转到打卡页面
+    driver.get(Checkin_URL)
 
     now = time.time()
     while True:
@@ -64,7 +62,7 @@ def checkin(a, b):
             break
         except:
             time.sleep(1)
-            print("获取\"我的表单\"失败，重试中")
+            logger.info("获取\"我的表单\"失败，重试中")
             if (time.time() - now) > 10:
                 run = False
                 return '获取\"我的表单\"失败'
@@ -77,7 +75,7 @@ def checkin(a, b):
             break
         except:
             time.sleep(1)
-            print("查找框内文本失败，重试中")
+            logger.info("查找框内文本失败，重试中")
             if (time.time() - now) > 10:
                 run = False
                 return '查找框内文本失败'
@@ -92,7 +90,7 @@ def checkin(a, b):
                 break
             except:
                 time.sleep(1)
-                print("点击\"是\"失败，重试中")
+                logger.info("点击\"是\"失败，重试中")
                 if (time.time() - now) > 10:
                     run = False
                     return '点击\"是\"失败'
@@ -105,7 +103,7 @@ def checkin(a, b):
                 break
             except:
                 time.sleep(1)
-                print("确认\"是\"失败，重试中")
+                logger.info("确认\"是\"失败，重试中")
                 if (time.time() - now) > 10:
                     return '确认\"是\"失败'
         save = driver.find_element_by_xpath("//*[@class='preview-container']/div[1]/div[1]/span[1]/span[1]")
@@ -124,17 +122,10 @@ def checkin(a, b):
     return output
 
 
-with open(userfile, 'r') as users:
-    lines = users.readlines()
-    for line in lines:
-        line = line.strip()
-        if line[0] == '#':
-            continue
-        a, b = line.split(' ')
-        output = checkin(a, b)
-
-        cur_time = (time.strftime('%Y_%m_%d_%r', time.localtime(time.time())))
-        with open(logfile, 'a') as log:
-            log.write(cur_time + ' ' + a + ' ' + output + '\n')
-
-        print('End\n')
+def main():
+    a = os.environ['USERNAME'].split('#')
+    b = os.environ['PASSWD'].split('#')
+    logger.info(checkin(a, b))
+   
+if __name__ == '__main__':
+    main()
