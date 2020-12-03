@@ -29,7 +29,7 @@ jobs:
         pip install selenium
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Setup Chromedriver
-      uses: actions/setup-chromedriver@v2
+      uses: nanasess/setup-chromedriver@main
       with:
         # Optional: do not specify to match Chrome's version
         chromedriver-version: '87.0.4280.88'
