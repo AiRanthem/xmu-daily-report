@@ -159,12 +159,12 @@ def main():
     passwd = os.environ['PASSWD'].split('#')
     
     # 邮件设置信息
-    from_addr = b"EphraimLjw@163.com"
-#     from_addr = os.environ['FROM_ADDR'].split('#')
-    mail_pwd = b"FULLECVMSVNBSDJH"
-#     mail_pwd = os.environ['MAIL_PWD'].split('#')
-    to_addr = b"24320172203182@stu.xmu.edu.cn"
-#     to_addr = os.environ['TO_ADDR'].split('#')
+#     from_addr = b"EphraimLjw@163.com"
+    from_addr = os.environ['FROM_ADDR'].split('#')
+#     mail_pwd = b"FULLECVMSVNBSDJH"
+    mail_pwd = os.environ['MAIL_PWD'].split('#')
+#     to_addr = b"24320172203182@stu.xmu.edu.cn"
+    to_addr = os.environ['TO_ADDR'].split('#')
     smtp_server = b"smtp.163.com"
 #     smtp_server = os.environ['SMTP_SERVER'].split('#')
     
