@@ -27,19 +27,9 @@ Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 
 def checkin(username, passwd):
     driver = webdriver.Chrome()
-    run = True
-    now = time.time()
-    while run:
-        try:
-            logger.info("进入登录页面")
-            driver.get(Login_URL)
-            break
-        except:
-            logger.info(url, "获取失败，重试中")
-            if (time.time() - now) > 10:
-                run = False
-                return '网页登陆失败'
-
+    
+    logger.info("进入登录页面")
+    driver.get(Login_URL)
     driver.maximize_window()
 
     # 这里直接定位到登录页面了，所以下面步骤不需要
@@ -55,19 +45,19 @@ def checkin(username, passwd):
     b.send_keys(passwd)
 
     # 点击登录，相当玄学，有可能提示找不到该元素，那时候就手动打卡吧
-    while 1:
-        start = time.clock()
+    run = True
+    now = time.time()
+    while run:
         try:
             login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
             login.click()
             logger.info("已定位到元素")
-            end=time.clock()
             break
         except:
             logger.info("还未定位到元素!")
-#     wait = ui.WebDriverWait(driver,10)
-#     wait.until(lambda driver: driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]"))
-    
+            if (time.time() - now) > 10:
+                run = False
+                return '运气不好，遇上了玄学问题'
 
     # 重新跳转到打卡页面
     driver.get(Checkin_URL)
