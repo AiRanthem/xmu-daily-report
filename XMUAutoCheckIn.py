@@ -13,19 +13,19 @@ import smtplib
 from selenium.webdriver.chrome.options import Options
 chrome_options = Options()
 # 添加UA
-chrome_options.add_argument('user-agent="MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"')
+# chrome_options.add_argument('user-agent="MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"')
 # 指定浏览器分辨率
 # chrome_options.add_argument('window-size=1920x3000') 
 # 谷歌文档提到需要加上这个属性来规避bug
 chrome_options.add_argument('--disable-gpu') 
  # 隐藏滚动条, 应对一些特殊页面
-chrome_options.add_argument('--hide-scrollbars')
+# chrome_options.add_argument('--hide-scrollbars')
 # 不加载图片, 提升速度
 chrome_options.add_argument('blink-settings=imagesEnabled=false') 
 # 浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
 # chrome_options.add_argument('--headless') 
 # 以最高权限运行
-chrome_options.add_argument('--no-sandbox')
+# chrome_options.add_argument('--no-sandbox')
 # 禁用浏览器弹窗
 prefs = {  
     'profile.default_content_setting_values' :  {  
@@ -55,7 +55,7 @@ def checkin(username, passwd):
 #     login.click()
 
     # 输入用户名密码
-    time.sleep(0.2)
+    time.sleep(1)
     a = driver.find_element_by_id('username')
     b = driver.find_element_by_id('password')
     a.send_keys(username)
