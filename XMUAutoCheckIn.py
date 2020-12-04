@@ -79,7 +79,8 @@ def checkin(username, passwd):
 
     # 重新跳转到打卡页面
     driver.get(Checkin_URL)
-
+    
+    sleep(2)
     now = time.time()
     while True:
         try:
@@ -93,6 +94,7 @@ def checkin(username, passwd):
                 run = False
                 return '获取\"我的表单\"失败'
 
+    sleep(2)
     now = time.time()
     while True:
         try:
