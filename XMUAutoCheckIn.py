@@ -24,10 +24,6 @@ logger = logging.getLogger(__name__)
 Login_URL = 'https://ids.xmu.edu.cn/authserver/login?service=https://xmuxg.xmu.edu.cn/login/cas/xmu'
 Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 
-# # VARIABLE NAME
-# USERNAME = "username"
-# PASSWD = "passwd"
-
 
 def checkin(username, passwd):
     driver = webdriver.Chrome()
@@ -45,6 +41,8 @@ def checkin(username, passwd):
                 return '网页登陆失败'
 
     driver.maximize_window()
+
+    # 这里直接定位到登录页面了，所以下面步骤不需要
 #     logintab = driver.find_element_by_class_name('login-tab')
 #     login = driver.find_element_by_xpath("//*[@class='buttonBox']/button[2]")
 #     login.click()
@@ -56,7 +54,7 @@ def checkin(username, passwd):
     a.send_keys(username)
     b.send_keys(passwd)
 
-#     # 点击登录
+#     # 点击登录，相当玄学，有可能提示找不到该元素，那时候就手动打卡吧
 #     wait = ui.WebDriverWait(driver,10)
 #     wait.until(lambda driver: driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]"))
     login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
@@ -142,23 +140,23 @@ def _format_addr(s):
 def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
     msg = MIMEText(output, 'plain', 'utf-8')
     msg['From'] = _format_addr('XMU每日打卡 <%s>' % from_addr)
-    msg['To'] = _format_addr('真是怠惰呢 <%s>' % to_addr)
+    msg['To'] = _format_addr('你可真是怠惰呢 <%s>' % to_addr)
     msg['Subject'] = Header('每日打卡结果反馈', 'utf-8').encode()
 
-    server = smtplib.SMTP(smtp_server, 25)
+    server = smtplib.SMTP_SSL(smtp_server, 465)
     server.set_debuglevel(1)
     server.login(from_addr, mail_pwd)
-    logger.info("Mail Login Success")
+    logger.info("邮箱登录成功")
     server.sendmail(from_addr, [to_addr], msg.as_string())
-    logger.info("Send Mail Success")
+    logger.info("邮件发送成功")
     server.quit()
 
 def main():
     # XMU统一身份认证用户名密码
     username = os.environ['USERNAME'].split('#')
     passwd = os.environ['PASSWD'].split('#')
-    
-    # 邮件设置信息
+
+    # 邮件设置信息，由于从secrets获取到的是list，这里进一步转string
     from_addr = ""
     from_addr = from_addr.join(os.environ['FROM_ADDR'].split('#'))
     mail_pwd = ""
@@ -167,12 +165,11 @@ def main():
     to_addr = to_addr.join(os.environ['TO_ADDR'].split('#'))
     smtp_server = ""
     smtp_server = smtp_server.join(os.environ['SMTP_SERVER'].split('#'))
-    
-#     output = checkin(username, passwd)
-    output = "Success"
+
+    output = checkin(username, passwd)
     logger.info(output)
     sendMail(from_addr, mail_pwd, to_addr, smtp_server, output)
-    
+
 
 if __name__ == '__main__':
     main()
