@@ -70,7 +70,6 @@ def checkin(username, passwd):
             form.click()
             break
         except:
-            time.sleep(1)
             logger.info("获取\"我的表单\"失败，重试中")
             if (time.time() - now) > 10:
                 run = False
@@ -83,7 +82,6 @@ def checkin(username, passwd):
             text = driver.find_element_by_xpath("//*[@id='select_1582538939790']/div[1]/div[1]/span[1]").text
             break
         except:
-            time.sleep(1)
             logger.info("查找框内文本失败，重试中")
             if (time.time() - now) > 10:
                 run = False
@@ -93,12 +91,12 @@ def checkin(username, passwd):
         now = time.time()
         while True:
             try:
+                time.sleep(1)
                 # 定位填“是”的页面
                 yes = driver.find_element_by_xpath("//*[@id='select_1582538939790']/div[1]/div[1]")
                 yes.click()
                 break
             except:
-                time.sleep(1)
                 logger.info("点击\"是\"失败，重试中")
                 if (time.time() - now) > 10:
                     run = False
@@ -107,11 +105,11 @@ def checkin(username, passwd):
         now = time.time()
         while True:
             try:
+                time.sleep(1)
                 yes = driver.find_element_by_xpath("//*[@class='v-select-cover']/ul[1]/div[1]")
                 yes.click()
                 break
             except:
-                time.sleep(1)
                 logger.info("确认\"是\"失败，重试中")
                 if (time.time() - now) > 10:
                     return '确认\"是\"失败'
