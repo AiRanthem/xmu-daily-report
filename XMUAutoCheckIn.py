@@ -13,7 +13,7 @@ import smtplib
 from selenium.webdriver.chrome.options import Options
 chrome_options = Options()
 # 添加UA
-# chrome_options.add_argument('user-agent="MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"')
+chrome_options.add_argument('user-agent="MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"')
 # 指定浏览器分辨率
 # chrome_options.add_argument('window-size=1920x3000') 
 # 谷歌文档提到需要加上这个属性来规避bug
