@@ -48,7 +48,7 @@ def checkin(username, passwd):
 #     login.click()
 
     # 输入用户名密码
-    time.sleep(1)
+    time.sleep(5)
     a = driver.find_element_by_id('username')
     b = driver.find_element_by_id('password')
     a.send_keys(username)
