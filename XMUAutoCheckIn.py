@@ -160,7 +160,6 @@ def main():
     mail_pwd = os.environ['MAIL_PWD'].split('#')
     to_addr = os.environ['TO_ADDR'].split('#')
     smtp_server = os.environ['SMTP_SERVER'].split('#')
-    print(from_addr +' '+ mail_pwd +' '+ to_addr +' '+ smtp_server +' '+ output)
     
     output = checkin(username, passwd)
     logger.info(output)
