@@ -163,7 +163,7 @@ def main():
     
     output = checkin(username, passwd)
     logger.info(output)
-    logger.info(sendMail(from_addr, mail_pwd, to_addr, smtp_server, output))
+    sendMail(from_addr, mail_pwd, to_addr, smtp_server, output)
     
 
 if __name__ == '__main__':
