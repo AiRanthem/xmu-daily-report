@@ -45,7 +45,6 @@ Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 def checkin(username, passwd):
     driver = webdriver.Chrome(chrome_options=chrome_options)
     
-    logger.info("进入登录页面")
     driver.get(Login_URL)
     driver.maximize_window()
 
@@ -56,6 +55,7 @@ def checkin(username, passwd):
 
     # 输入用户名密码
     time.sleep(1)
+    logger.info("进入登录页面")
     a = driver.find_element_by_id('username')
     b = driver.find_element_by_id('password')
     a.send_keys(username)
