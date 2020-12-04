@@ -1,5 +1,5 @@
 from selenium import webdriver
-import selenium.webdriver.support.ui as ui
+# import selenium.webdriver.support.ui as ui
 import os
 import time
 import logging
@@ -49,15 +49,15 @@ def checkin(username, passwd):
     login.click()
 
     # 输入用户名密码
-    time.sleep(1)
+    time.sleep(5)
     a = driver.find_element_by_id('username')
     b = driver.find_element_by_id('password')
     a.send_keys(username)
     b.send_keys(passwd)
 
-    # 点击登录
-    wait = ui.WebDriverWait(driver,10)
-    wait.until(lambda driver: driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]"))
+#     # 点击登录
+#     wait = ui.WebDriverWait(driver,10)
+#     wait.until(lambda driver: driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]"))
     login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
     login.click()
 
