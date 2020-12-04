@@ -67,6 +67,7 @@ def checkin(username, passwd):
     now = time.time()
     while True:
         try:
+            time.sleep(1)
             form = driver.find_element_by_xpath("//*[@class='gm-scroll-view']/div[2]")
             form.click()
             break
@@ -80,6 +81,7 @@ def checkin(username, passwd):
     now = time.time()
     while True:
         try:
+            time.sleep(1)
             text = driver.find_element_by_xpath("//*[@id='select_1582538939790']/div[1]/div[1]/span[1]").text
             break
         except:
@@ -158,6 +160,7 @@ def main():
     mail_pwd = os.environ['MAIL_PWD'].split('#')
     to_addr = os.environ['TO_ADDR'].split('#')
     smtp_server = os.environ['SMTP_SERVER'].split('#')
+    print(smtp_server)
     
     output = checkin(username, passwd)
     logger.info(output)
