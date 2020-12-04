@@ -145,7 +145,7 @@ def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
     msg['To'] = _format_addr('真是怠惰呢 <%s>' % to_addr)
     msg['Subject'] = Header('每日打卡结果反馈', 'utf-8').encode()
 
-    server = smtplib.SMTP_SSL(smtp_server, 465)
+    server = smtplib.SMTP_SSL(str(smtp_server), 465)
     server.set_debuglevel(1)
     server.login(from_addr, password)
     logger.info("Mail Login Success")
