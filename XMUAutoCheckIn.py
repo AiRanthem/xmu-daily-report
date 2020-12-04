@@ -38,7 +38,6 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 Login_URL = 'https://xmuxg.xmu.edu.cn/login'
-# Login_URL = 'https://ids.xmu.edu.cn/authserver/login?service=https://xmuxg.xmu.edu.cn/login/cas/xmu'
 Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 
 
@@ -48,13 +47,13 @@ def checkin(username, passwd):
     driver.get(Login_URL)
     driver.maximize_window()
 
-    # 这里直接定位到登录页面了，所以下面步骤不需要
+    # 选择统一身份认证登录
     logintab = driver.find_element_by_class_name('login-tab')
     login = driver.find_element_by_xpath("//*[@class='buttonBox']/button[2]")
     login.click()
 
     # 输入用户名密码
-    time.sleep(1)
+    time.sleep(2)
     logger.info("进入登录页面")
     a = driver.find_element_by_id('username')
     b = driver.find_element_by_id('password')
@@ -66,12 +65,12 @@ def checkin(username, passwd):
     now = time.time()
     while run:
         try:
-            time.sleep(1)
             login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
             login.click()
             logger.info("已定位到元素")
             break
         except:
+            time.sleep(1)
             logger.info("还未定位到元素!")
             if (time.time() - now) > 10:
                 run = False
