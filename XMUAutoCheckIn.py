@@ -49,7 +49,7 @@ def checkin(username, passwd):
     login.click()
 
     # 输入用户名密码
-    time.sleep(0.2)
+    time.sleep(1)
     a = driver.find_element_by_id('username')
     b = driver.find_element_by_id('password')
     a.send_keys(username)
@@ -67,7 +67,6 @@ def checkin(username, passwd):
     now = time.time()
     while True:
         try:
-            time.sleep(3)
             form = driver.find_element_by_xpath("//*[@class='gm-scroll-view']/div[2]")
             form.click()
             break
@@ -81,7 +80,6 @@ def checkin(username, passwd):
     now = time.time()
     while True:
         try:
-            time.sleep(3)
             text = driver.find_element_by_xpath("//*[@id='select_1582538939790']/div[1]/div[1]/span[1]").text
             break
         except:
