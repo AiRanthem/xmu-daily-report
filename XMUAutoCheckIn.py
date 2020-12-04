@@ -48,17 +48,26 @@ def checkin(username, passwd):
 #     login.click()
 
     # 输入用户名密码
-    time.sleep(5)
+    time.sleep(1)
     a = driver.find_element_by_id('username')
     b = driver.find_element_by_id('password')
     a.send_keys(username)
     b.send_keys(passwd)
 
-#     # 点击登录，相当玄学，有可能提示找不到该元素，那时候就手动打卡吧
+    # 点击登录，相当玄学，有可能提示找不到该元素，那时候就手动打卡吧
+    while 1:
+        start = time.clock()
+        try:
+            login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
+            login.click()
+            logger.info("已定位到元素")
+            end=time.clock()
+            break
+        except:
+            logger.info("还未定位到元素!")
 #     wait = ui.WebDriverWait(driver,10)
 #     wait.until(lambda driver: driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]"))
-    login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
-    login.click()
+    
 
     # 重新跳转到打卡页面
     driver.get(Checkin_URL)
