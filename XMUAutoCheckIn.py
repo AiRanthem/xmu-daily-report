@@ -145,7 +145,7 @@ def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
     msg['To'] = _format_addr('真是怠惰呢 <%s>' % to_addr)
     msg['Subject'] = Header('每日打卡结果反馈', 'utf-8').encode()
 
-    server = smtplib.SMTP_SSL(smtp_server, 465)
+    server = smtplib.SMTP(smtp_server, 25)
     server.set_debuglevel(1)
     server.login(from_addr, mail_pwd)
     logger.info("Mail Login Success")
@@ -159,9 +159,12 @@ def main():
     passwd = os.environ['PASSWD'].split('#')
     
     # 邮件设置信息
-    from_addr = os.environ['FROM_ADDR'].split('#')
-    mail_pwd = os.environ['MAIL_PWD'].split('#')
-    to_addr = os.environ['TO_ADDR'].split('#')
+    from_addr = b"EphraimLjw@163.com"
+#     from_addr = os.environ['FROM_ADDR'].split('#')
+    mail_pwd = b"FULLECVMSVNBSDJH"
+#     mail_pwd = os.environ['MAIL_PWD'].split('#')
+    to_addr = b"24320172203182@stu.xmu.edu.cn"
+#     to_addr = os.environ['TO_ADDR'].split('#')
     smtp_server = b"smtp.163.com"
 #     smtp_server = os.environ['SMTP_SERVER'].split('#')
     
