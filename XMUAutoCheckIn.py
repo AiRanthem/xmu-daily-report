@@ -3,6 +3,13 @@ import os
 import time
 import logging
 
+from email import encoders
+from email.header import Header
+from email.mime.text import MIMEText
+from email.utils import parseaddr, formataddr
+
+import smtplib
+
 # from selenium.webdriver.chrome.options import Options
 # chrome_options = Options()
 # chrome_options.add_argument('--no-sandbox')
@@ -20,7 +27,7 @@ USERNAME = "username"
 PASSWD = "passwd"
 
 
-def checkin(a, b):
+def checkin(username, passwd):
     driver = webdriver.Chrome()
     run = True
     now = time.time()
@@ -41,13 +48,15 @@ def checkin(a, b):
     login.click()
 
     # 输入用户名密码
-    time.sleep(2)
-    c = driver.find_element_by_id('username')
-    d = driver.find_element_by_id('password')
-    c.send_keys(a)
-    d.send_keys(b)
+    time.sleep(0.2)
+    a = driver.find_element_by_id('username')
+    b = driver.find_element_by_id('password')
+    a.send_keys(username)
+    b.send_keys(passwd)
 
     # 点击登录
+    wait = ui.WebDriverWait(driver,10)
+    wait.until(lambda driver: driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]"))
     login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
     login.click()
 
@@ -123,10 +132,38 @@ def checkin(a, b):
     return output
 
 
+def _format_addr(s):
+    name, addr = parseaddr(s)
+    return formataddr((Header(name, 'utf-8').encode(), addr))
+
+
+def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
+    msg = MIMEText(output, 'plain', 'utf-8')
+    msg['From'] = _format_addr('XMU每日打卡 <%s>' % from_addr)
+    msg['To'] = _format_addr('真是怠惰呢 <%s>' % to_addr)
+    msg['Subject'] = Header('每日打卡结果反馈', 'utf-8').encode()
+
+    server = smtplib.SMTP(smtp_server, 25)
+    server.set_debuglevel(1)
+    server.login(from_addr, password)
+    server.sendmail(from_addr, [to_addr], msg.as_string())
+    server.quit()
+
 def main():
-    a = os.environ['USERNAME'].split('#')
-    b = os.environ['PASSWD'].split('#')
-    logger.info(checkin(a, b))
+    # XMU统一身份认证用户名密码
+    username = os.environ['USERNAME'].split('#')
+    passwd = os.environ['PASSWD'].split('#')
+    
+    # 邮件设置信息
+    from_addr = os.environ['FROM_ADDR'].split('#')
+    mail_pwd = os.environ['MAIL_PWD'].split('#')
+    to_addr = os.environ['TO_ADDR'].split('#')
+    smtp_server = os.environ['SMTP_SERVER'].split('#')
+    
+    output = checkin(username, passwd)
+    logger.info(output)
+    logger.info(sendMail(from_addr, mail_pwd, to_addr, smtp_server, output))
+    
 
 if __name__ == '__main__':
     main()
