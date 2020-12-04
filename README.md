@@ -7,4 +7,4 @@
 + `FROM_ADDR`：发件人邮箱
 + `MAIL_PASSWD`：邮箱授权密码，不是登录密码，需要注意
 + `TO_ADDR`：收件人邮箱
-+ `SMTP_SERVER`：smtp服务器地址
++ `SMTP_SERVER`：smtp服务器地址（更新，这条不用添加，请手动在py文件中修改）
