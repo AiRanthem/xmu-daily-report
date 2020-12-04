@@ -20,12 +20,13 @@ import smtplib
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-Login_URL = 'https://xmuxg.xmu.edu.cn/login'
+# Login_URL = 'https://xmuxg.xmu.edu.cn/login'
+Login_URL = 'https://ids.xmu.edu.cn/authserver/login?service=https://xmuxg.xmu.edu.cn/login/cas/xmu'
 Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 
-# VARIABLE NAME
-USERNAME = "username"
-PASSWD = "passwd"
+# # VARIABLE NAME
+# USERNAME = "username"
+# PASSWD = "passwd"
 
 
 def checkin(username, passwd):
@@ -44,12 +45,12 @@ def checkin(username, passwd):
                 return '网页登陆失败'
 
     driver.maximize_window()
-    logintab = driver.find_element_by_class_name('login-tab')
-    login = driver.find_element_by_xpath("//*[@class='buttonBox']/button[2]")
-    login.click()
+#     logintab = driver.find_element_by_class_name('login-tab')
+#     login = driver.find_element_by_xpath("//*[@class='buttonBox']/button[2]")
+#     login.click()
 
     # 输入用户名密码
-    time.sleep(5)
+    time.sleep(1)
     a = driver.find_element_by_id('username')
     b = driver.find_element_by_id('password')
     a.send_keys(username)
@@ -147,7 +148,9 @@ def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
     server = smtplib.SMTP(smtp_server, 25)
     server.set_debuglevel(1)
     server.login(from_addr, password)
+    logger.info("Mail Login Success")
     server.sendmail(from_addr, [to_addr], msg.as_string())
+    logger.info("Send Mail Success")
     server.quit()
 
 def main():
