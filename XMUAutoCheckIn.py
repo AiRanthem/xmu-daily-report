@@ -87,7 +87,6 @@ def checkin(username, passwd):
             form.click()
             break
         except:
-            driver.get(Checkin_URL)
             time.sleep(1)
             logger.info("获取\"我的表单\"失败，重试中")
             if (time.time() - now) > 10:
