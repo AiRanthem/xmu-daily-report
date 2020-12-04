@@ -37,8 +37,8 @@ chrome_options.add_experimental_option('prefs',prefs)
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-# Login_URL = 'https://xmuxg.xmu.edu.cn/login'
-Login_URL = 'https://ids.xmu.edu.cn/authserver/login?service=https://xmuxg.xmu.edu.cn/login/cas/xmu'
+Login_URL = 'https://xmuxg.xmu.edu.cn/login'
+# Login_URL = 'https://ids.xmu.edu.cn/authserver/login?service=https://xmuxg.xmu.edu.cn/login/cas/xmu'
 Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 
 
@@ -50,9 +50,9 @@ def checkin(username, passwd):
     driver.maximize_window()
 
     # 这里直接定位到登录页面了，所以下面步骤不需要
-#     logintab = driver.find_element_by_class_name('login-tab')
-#     login = driver.find_element_by_xpath("//*[@class='buttonBox']/button[2]")
-#     login.click()
+    logintab = driver.find_element_by_class_name('login-tab')
+    login = driver.find_element_by_xpath("//*[@class='buttonBox']/button[2]")
+    login.click()
 
     # 输入用户名密码
     time.sleep(1)
