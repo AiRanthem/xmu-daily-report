@@ -49,6 +49,7 @@ def checkin(username, passwd):
     now = time.time()
     while run:
         try:
+            time.sleep(1)
             login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
             login.click()
             logger.info("已定位到元素")
