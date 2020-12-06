@@ -7,9 +7,9 @@ from email import encoders
 from email.header import Header
 from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
-
 import smtplib
 
+# chrome可选配置，部分功能经检测影响脚本运行所以关掉
 from selenium.webdriver.chrome.options import Options
 chrome_options = Options()
 # 添加UA
@@ -34,9 +34,11 @@ chrome_options.add_argument('blink-settings=imagesEnabled=false')
 # }  
 # chrome_options.add_experimental_option('prefs',prefs)
 
+# 日志配置
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+# 登录url和打卡url
 Login_URL = 'https://xmuxg.xmu.edu.cn/login'
 Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 
@@ -61,9 +63,8 @@ def checkin(username, passwd):
     b.send_keys(passwd)
 
     # 点击登录，相当玄学，有可能提示找不到该元素，那时候就手动打卡吧
-    run = True
     now = time.time()
-    while run:
+    while True:
         try:
             login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
             login.click()
@@ -73,8 +74,8 @@ def checkin(username, passwd):
             time.sleep(1)
             logger.info("还未定位到元素!")
             if (time.time() - now) > 10:
-                run = False
-                return '运气不好，遇上了玄学问题'
+                driver.close()
+                return 'Bug'
 
     # 重新跳转到打卡页面
     driver.get(Checkin_URL)
@@ -90,7 +91,7 @@ def checkin(username, passwd):
             time.sleep(1)
             logger.info("获取\"我的表单\"失败，重试中")
             if (time.time() - now) > 10:
-                run = False
+                driver.close()
                 return '获取\"我的表单\"失败'
 
     time.sleep(2)
@@ -103,7 +104,7 @@ def checkin(username, passwd):
             time.sleep(1)
             logger.info("查找框内文本失败，重试中")
             if (time.time() - now) > 10:
-                run = False
+                driver.close()
                 return '查找框内文本失败'
 
     if text == '请选择':
@@ -118,7 +119,7 @@ def checkin(username, passwd):
                 time.sleep(1)
                 logger.info("点击\"是\"失败，重试中")
                 if (time.time() - now) > 10:
-                    run = False
+                    driver.close()
                     return '点击\"是\"失败'
 
         now = time.time()
@@ -131,6 +132,7 @@ def checkin(username, passwd):
                 time.sleep(1)
                 logger.info("确认\"是\"失败，重试中")
                 if (time.time() - now) > 10:
+                    driver.close()
                     return '确认\"是\"失败'
         save = driver.find_element_by_xpath("//*[@class='preview-container']/div[1]/div[1]/span[1]/span[1]")
         save.click()
@@ -182,9 +184,15 @@ def main():
     smtp_server = ""
     smtp_server = smtp_server.join(os.environ['SMTP_SERVER'].split('#'))
 
-    output = checkin(username, passwd)
-    logger.info(output)
-    sendMail(from_addr, mail_pwd, to_addr, smtp_server, output)
+    # 当遇上玄学问题时自动重新运行打卡功能
+    while True:
+        try:
+            output = checkin(username, passwd)
+            logger.info(output)
+            if output == 'Bug':
+                continue
+        except:
+            sendMail(from_addr, mail_pwd, to_addr, smtp_server, output)
 
 
 if __name__ == '__main__':
