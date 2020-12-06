@@ -186,13 +186,13 @@ def main():
 
     # 当遇上玄学问题时自动重新运行打卡功能
     while True:
-        try:
-            output = checkin(username, passwd)
-            logger.info(output)
-            if output == 'Bug':
-                continue
-        except:
+        output = checkin(username, passwd)
+        logger.info(output)
+        if output == 'Bug':
+            continue
+        else:
             sendMail(from_addr, mail_pwd, to_addr, smtp_server, output)
+            break
 
 
 if __name__ == '__main__':
