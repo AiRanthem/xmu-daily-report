@@ -189,6 +189,7 @@ def main():
         output = checkin(username, passwd)
         logger.info(output)
         if output == 'Bug':
+            time.sleep(30)
             continue
         else:
             sendMail(from_addr, mail_pwd, to_addr, smtp_server, output)
