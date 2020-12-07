@@ -49,7 +49,11 @@ Login_URL = 'https://xmuxg.xmu.edu.cn/login'
 Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 
 
-def checkin(username, passwd):
+def checkin():
+    # XMU统一身份认证用户名密码
+    username = os.environ['USERNAME'].split('#')
+    passwd = os.environ['PASSWD'].split('#')
+    
     driver = webdriver.Chrome(options=chrome_options)
     driver.maximize_window()
 
@@ -153,7 +157,17 @@ def _format_addr(s):
 
 
 # 通过邮件推送打卡情况
-def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
+def sendMail(output):
+    # 邮件设置信息，由于从secrets获取到的是list，这里进一步转string
+    from_addr = ""
+    from_addr = from_addr.join(os.environ['FROM_ADDR'].split('#'))
+    mail_pwd = ""
+    mail_pwd = mail_pwd.join(os.environ['MAIL_PWD'].split('#'))
+    to_addr = ""
+    to_addr = to_addr.join(os.environ['TO_ADDR'].split('#'))
+    smtp_server = ""
+    smtp_server = smtp_server.join(os.environ['SMTP_SERVER'].split('#'))
+    
     msg = MIMEText(output, 'plain', 'utf-8')
     msg['From'] = _format_addr('XMU每日打卡 <%s>' % from_addr)
     msg['To'] = _format_addr('你可真是怠惰呢 <%s>' % to_addr)
@@ -169,7 +183,11 @@ def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
 
 
 # 通过Server酱推送打卡情况
-def serverChan(output, server_key):
+def serverChan(output):
+    # server酱的key
+    server_key = ""
+    server_key = server_key.join(os.environ['SERVER_KEY'].split('#'))
+    
     api = "https://sc.ftqq.com/%s.send"%(server_key)
     title = u"XMU每日打卡"
     headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
@@ -181,36 +199,22 @@ def serverChan(output, server_key):
 
 
 def main():
-    # XMU统一身份认证用户名密码
-    username = os.environ['USERNAME'].split('#')
-    passwd = os.environ['PASSWD'].split('#')
-
-    # 邮件设置信息，由于从secrets获取到的是list，这里进一步转string
-    from_addr = ""
-    from_addr = from_addr.join(os.environ['FROM_ADDR'].split('#'))
-    mail_pwd = ""
-    mail_pwd = mail_pwd.join(os.environ['MAIL_PWD'].split('#'))
-    to_addr = ""
-    to_addr = to_addr.join(os.environ['TO_ADDR'].split('#'))
-    smtp_server = ""
-    smtp_server = smtp_server.join(os.environ['SMTP_SERVER'].split('#'))
-
-#     # server酱的key
-#     server_key = ""
-#     server_key = server_key.join(os.environ['SERVER_KEY'].split('#'))
-
     # 先暂停一个随机时间规避通过打卡时间检查脚本打卡
     time.sleep(random.randint(0, 300))
 
     # 当打卡失败时自动重新运行打卡功能
     while True:
-        output = checkin(username, passwd)
+        output = checkin()
         logger.info(output)
         if output == '打卡失败':
             continue
         else:
-            sendMail(from_addr, mail_pwd, to_addr, smtp_server, output)
-#             serverChan(output, server_key)
+            # 开启邮件推送
+            sendMail(output)
+            
+            # 开启Server酱推送
+#             serverChan(output)
+
             break
 
 

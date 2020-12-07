@@ -20,17 +20,7 @@
 + `TO_ADDR`：收件人邮箱；
 + `SMTP_SERVER`：发件人邮箱的smtp服务器地址。
 
-若不想开启邮件推送，请将下面截图中的相关部分注释掉（红框中的内容）。
-
-相关部分：
-
-+ `.github/workflows/XMU_Auto_Check_In.yml`
-
-  ![image-20201207172042850](https://ljw-typora.oss-cn-shanghai.aliyuncs.com/mdImg/image-20201207172042850.png)
-
-+ `XMUAutoCheckIn.py`
-
-  ![image-20201207172156474](https://ljw-typora.oss-cn-shanghai.aliyuncs.com/mdImg/image-20201207172156474.png)
+若不想开启邮件推送，请根据注释提示，将`XMUAutoCheckIn.py`脚本最后的相关内容注释掉。
 
 ## Server酱推送
 
@@ -38,19 +28,11 @@
 
 + `SERVER_KEY`：将`SCKEY`复制进去。
 
-若不想开启Server酱推送，请将下面截图中的相关部分注释掉（红框中的内容）。
+若不想开启Server酱推送，请根据注释提示，将`XMUAutoCheckIn.py`脚本最后的相关内容注释掉。本人默认是关闭Server酱的，如要启用，请将相关注释去掉。
 
-相关部分：
+***<u>相关内容</u>***
 
-+ `.github/workflows/XMU_Auto_Check_In.yml`
-
-  ![image-20201207172329601](https://ljw-typora.oss-cn-shanghai.aliyuncs.com/mdImg/image-20201207172329601.png)
-
-+ `XMUAutoCheckIn.py`
-
-  ![image-20201207172405626](https://ljw-typora.oss-cn-shanghai.aliyuncs.com/mdImg/image-20201207172405626.png)
-
-  本人默认是关闭Server酱的，如要启用，请将相关注释去掉。
+![image-20201208005845077](https://ljw-typora.oss-cn-shanghai.aliyuncs.com/mdImg/image-20201208005845077.png)
 
 ## 免责声明
 
