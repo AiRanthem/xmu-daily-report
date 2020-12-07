@@ -24,7 +24,7 @@
 
 ## Server酱推送
 
-邮件推送可能比较麻烦，因此也添加了Server酱推送部分。前往http://sc.ftqq.com/获得个人的`SCKEY`，然后添加一条`Secrets`：
+邮件推送可能比较麻烦，因此也添加了Server酱推送部分。前往http://sc.ftqq.com/ 获得个人的`SCKEY`，然后添加一条`Secrets`：
 
 + `SERVER_KEY`：将`SCKEY`复制进去。
 
