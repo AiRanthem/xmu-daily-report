@@ -32,7 +32,7 @@ jobs:
       with:
         # Optional: do not specify to match Chrome's version
         chromedriver-version: '87.0.4280.88'
-    - name: Run the CheckIn Sehll
+    - name: Run the CheckIn Shell
       env:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWD: ${{ secrets.PASSWD }}
