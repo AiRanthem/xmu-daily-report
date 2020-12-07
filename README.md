@@ -5,7 +5,7 @@
 ## Action执行打卡
 
 1. Fork本项目；
-2. 在`Settings->Secrets`下新建两个``Secrets`：
+2. 在`Settings->Secrets`下新建两个`Secrets`：
    + `USERNAME`：你的XMU用户名
    + `PASSWD`：统一身份认证的密码
 3. 在`Action`下允许`workflow`运行；
@@ -20,7 +20,17 @@
 + `TO_ADDR`：收件人邮箱；
 + `SMTP_SERVER`：发件人邮箱的smtp服务器地址。
 
-若不想开启邮件推送，请将`.github/workflows/XMU_Auto_Check_In.yml`中`env`下上述四条，以及`XMUAutoCheckIn.py`的第212行注释掉。
+若不想开启邮件推送，请将下面截图中的相关部分注释掉（红框中的内容）。
+
+相关部分：
+
++ `.github/workflows/XMU_Auto_Check_In.yml`
+
+  ![image-20201207172042850](https://ljw-typora.oss-cn-shanghai.aliyuncs.com/mdImg/image-20201207172042850.png)
+
++ `XMUAutoCheckIn.py`
+
+  ![image-20201207172156474](https://ljw-typora.oss-cn-shanghai.aliyuncs.com/mdImg/image-20201207172156474.png)
 
 ## Server酱推送
 
@@ -28,7 +38,19 @@
 
 + `SERVER_KEY`：将`SCKEY`复制进去。
 
-若不想开启Server酱推送，请将`.github/workflows/XMU_Auto_Check_In.yml`中`env`下上述条，以及`XMUAutoCheckIn.py`的第213行注释掉。
+若不想开启Server酱推送，请将下面截图中的相关部分注释掉（红框中的内容）。
+
+相关部分：
+
++ `.github/workflows/XMU_Auto_Check_In.yml`
+
+  ![image-20201207172329601](https://ljw-typora.oss-cn-shanghai.aliyuncs.com/mdImg/image-20201207172329601.png)
+
++ `XMUAutoCheckIn.py`
+
+  ![image-20201207172405626](https://ljw-typora.oss-cn-shanghai.aliyuncs.com/mdImg/image-20201207172405626.png)
+
+  本人默认是关闭Server酱的，如要启用，请将相关注释去掉。
 
 ## 免责声明
 
