@@ -1,7 +1,11 @@
 from selenium import webdriver
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import os
 import time
 import logging
+import random
 
 from email import encoders
 from email.header import Header
@@ -9,29 +13,31 @@ from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
 import smtplib
 
+import requests
+
 # chrome可选配置，部分功能经检测影响脚本运行所以关掉
 from selenium.webdriver.chrome.options import Options
 chrome_options = Options()
 # 添加UA
 # chrome_options.add_argument('user-agent="MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"')
 # 指定浏览器分辨率
-# chrome_options.add_argument('window-size=1920x3000') 
+# chrome_options.add_argument('window-size=1920x3000')
 # 谷歌文档提到需要加上这个属性来规避bug
-chrome_options.add_argument('--disable-gpu') 
+chrome_options.add_argument('--disable-gpu')
  # 隐藏滚动条, 应对一些特殊页面
 chrome_options.add_argument('--hide-scrollbars')
 # 不加载图片, 提升速度
-chrome_options.add_argument('blink-settings=imagesEnabled=false') 
+chrome_options.add_argument('blink-settings=imagesEnabled=false')
 # 浏览器不提供可视化页面. linux下如果系统不支持可视化不加这条会启动失败
-# chrome_options.add_argument('--headless') 
+# chrome_options.add_argument('--headless')
 # 以最高权限运行
 # chrome_options.add_argument('--no-sandbox')
 # 禁用浏览器弹窗
-# prefs = {  
-#     'profile.default_content_setting_values' :  {  
-#         'notifications' : 2  
-#      }  
-# }  
+# prefs = {
+#     'profile.default_content_setting_values' :  {
+#         'notifications' : 2
+#      }
+# }
 # chrome_options.add_experimental_option('prefs',prefs)
 
 # 日志配置
@@ -44,97 +50,90 @@ Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 
 
 def checkin(username, passwd):
-    driver = webdriver.Chrome(chrome_options=chrome_options)
-    
-    driver.get(Login_URL)
+    driver = webdriver.Chrome(options=chrome_options)
     driver.maximize_window()
 
-    # 选择统一身份认证登录
-    logintab = driver.find_element_by_class_name('login-tab')
+    # 进入登录页面
+    driver.get(Login_URL)
+
+    # 选择统一身份认证登录跳转到真正的登录页面
     login = driver.find_element_by_xpath("//*[@class='buttonBox']/button[2]")
     login.click()
 
-    # 输入用户名密码
-    time.sleep(2)
-    logger.info("进入登录页面")
-    a = driver.find_element_by_id('username')
-    b = driver.find_element_by_id('password')
-    a.send_keys(username)
-    b.send_keys(passwd)
-
-    # 点击登录，相当玄学，有可能提示找不到该元素，那时候就手动打卡吧
-    now = time.time()
+    # 查找页面元素，如果某些元素查找不到则返回错误
     while True:
         try:
-            login = driver.find_element_by_xpath("//*[@id='casLoginForm']/p[5]")
-            login.click()
+            logger.info("进入登录页面")
+            logintab = driver.find_element_by_class_name('auth_tab_content')
+            login = WebDriverWait(driver, 10).until(lambda logintab: logintab.find_element_by_xpath("//*[@id='casLoginForm']/p[4]/button"))
+            user = logintab.find_element_by_id('username')
+            pwd = logintab.find_element_by_id('password')
             logger.info("已定位到元素")
             break
         except:
-            time.sleep(1)
-            logger.info("还未定位到元素!")
-            if (time.time() - now) > 10:
-                driver.close()
-                return 'Bug'
+            logger.info("未定位到元素!")
+            driver.close()
+            return '打卡失败'
+
+    # 输入用户名密码并点击登录
+    user.send_keys(username)
+    pwd.send_keys(passwd)
+    login.click()
 
     # 重新跳转到打卡页面
     driver.get(Checkin_URL)
-    
-    time.sleep(2)
-    now = time.time()
+
+    # 获取 “我的表单”
     while True:
         try:
-            form = driver.find_element_by_xpath("//*[@class='gm-scroll-view']/div[2]")
+            form = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[@id='mainM']/div/div/div/div[1]/div[2]/div/div[3]/div[2]"))
             form.click()
+            logger.info("获取\"我的表单\"成功")
             break
         except:
-            time.sleep(1)
-            logger.info("获取\"我的表单\"失败，重试中")
-            if (time.time() - now) > 10:
-                driver.close()
-                return '获取\"我的表单\"失败'
+            logger.info("获取\"我的表单\"失败")
+            driver.close()
+            return '打卡失败'
 
-    time.sleep(2)
-    now = time.time()
+    # 查找框内文本
     while True:
         try:
-            text = driver.find_element_by_xpath("//*[@id='select_1582538939790']/div[1]/div[1]/span[1]").text
+            text = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[@id='select_1582538939790']/div/div/span[1]").text)
+            logger.info("查找框内文本成功")
             break
         except:
-            time.sleep(1)
-            logger.info("查找框内文本失败，重试中")
-            if (time.time() - now) > 10:
-                driver.close()
-                return '查找框内文本失败'
+            logger.info("查找框内文本失败")
+            driver.close()
+            return '打卡失败'
 
+    # 定位填“是”的页面
     if text == '请选择':
         now = time.time()
         while True:
             try:
-                # 定位填“是”的页面
-                yes = driver.find_element_by_xpath("//*[@id='select_1582538939790']/div[1]/div[1]")
+                yes = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[@id='select_1582538939790']/div/div"))
                 yes.click()
+                logger.info("点击\"是\"成功")
                 break
             except:
-                time.sleep(1)
-                logger.info("点击\"是\"失败，重试中")
-                if (time.time() - now) > 10:
-                    driver.close()
-                    return '点击\"是\"失败'
+                logger.info("点击\"是\"失败")
+                driver.close()
+                return '打卡失败'
 
         now = time.time()
         while True:
             try:
-                yes = driver.find_element_by_xpath("//*[@class='v-select-cover']/ul[1]/div[1]")
+                yes = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("/html/body/div[8]/ul/div/div[3]/li/label"))
                 yes.click()
+                logger.info("确认\"是\"成功")
                 break
             except:
-                time.sleep(1)
-                logger.info("确认\"是\"失败，重试中")
-                if (time.time() - now) > 10:
-                    driver.close()
-                    return '确认\"是\"失败'
-        save = driver.find_element_by_xpath("//*[@class='preview-container']/div[1]/div[1]/span[1]/span[1]")
+                logger.info("确认\"是\"失败")
+                driver.close()
+                return '打卡失败'
+
+        # 点击保存按钮
+        save = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[@id='preview1607310348959']/span/span"))
         save.click()
 
         time.sleep(1)
@@ -144,8 +143,6 @@ def checkin(username, passwd):
         output = '打卡成功'
     elif text == '是 Yes':
         output = '已打卡'
-    else:
-        output = '打卡失败！！！'
     driver.close()
     return output
 
@@ -155,6 +152,7 @@ def _format_addr(s):
     return formataddr((Header(name, 'utf-8').encode(), addr))
 
 
+# 通过邮件推送打卡情况
 def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
     msg = MIMEText(output, 'plain', 'utf-8')
     msg['From'] = _format_addr('XMU每日打卡 <%s>' % from_addr)
@@ -168,6 +166,19 @@ def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
     server.sendmail(from_addr, [to_addr], msg.as_string())
     logger.info("邮件发送成功")
     server.quit()
+
+
+# 通过Server酱推送打卡情况
+def serverChan(output, server_key):
+    api = "https://sc.ftqq.com/" + server_key + ".send"
+    title = u"XMU每日打卡"
+
+    msg = {
+        "text": title,
+        "desp": output
+    }
+    req = requests.post(api, data=msg)
+
 
 def main():
     # XMU统一身份认证用户名密码
@@ -184,15 +195,22 @@ def main():
     smtp_server = ""
     smtp_server = smtp_server.join(os.environ['SMTP_SERVER'].split('#'))
 
-    # 当遇上玄学问题时自动重新运行打卡功能
+    # server酱的key
+    server_key = ""
+    server_key = server_key.join(os.environ['SERVER_KEY'].split('#'))
+
+    # 先暂停一个随机时间规避通过打卡时间检查脚本打卡
+    time.sleep(random.randint(0, 600))
+
+    # 当打卡失败时自动重新运行打卡功能
     while True:
         output = checkin(username, passwd)
         logger.info(output)
-        if output == 'Bug':
-            time.sleep(30)
+        if output == '打卡失败':
             continue
         else:
             sendMail(from_addr, mail_pwd, to_addr, smtp_server, output)
+            serverChan(output, server_key)
             break
 
 

@@ -40,5 +40,6 @@ jobs:
           MAIL_PWD: ${{ secrets.MAIL_PWD }}
           TO_ADDR: ${{ secrets.TO_ADDR }}
           SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
+          SERVER_KEY: ${{ secrets.SERVER_KEY }}
       run: |
         ./XMUAutoCheckIn.sh
