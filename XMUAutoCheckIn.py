@@ -170,14 +170,14 @@ def sendMail(from_addr, mail_pwd, to_addr, smtp_server, output):
 
 # 通过Server酱推送打卡情况
 def serverChan(output, server_key):
-    api = "https://sc.ftqq.com/" + server_key + ".send"
+    api = "https://sc.ftqq.com/%s.send"%(server_key)
     title = u"XMU每日打卡"
-
+    headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
     msg = {
         "text": title,
         "desp": output
     }
-    req = requests.post(api, data=msg)
+    requests.post(api, data=msg, headers=headers)
 
 
 def main():
@@ -195,12 +195,12 @@ def main():
     smtp_server = ""
     smtp_server = smtp_server.join(os.environ['SMTP_SERVER'].split('#'))
 
-    # server酱的key
-    server_key = ""
-    server_key = server_key.join(os.environ['SERVER_KEY'].split('#'))
+#     # server酱的key
+#     server_key = ""
+#     server_key = server_key.join(os.environ['SERVER_KEY'].split('#'))
 
     # 先暂停一个随机时间规避通过打卡时间检查脚本打卡
-    time.sleep(random.randint(0, 600))
+    time.sleep(random.randint(0, 300))
 
     # 当打卡失败时自动重新运行打卡功能
     while True:
@@ -210,7 +210,7 @@ def main():
             continue
         else:
             sendMail(from_addr, mail_pwd, to_addr, smtp_server, output)
-            serverChan(output, server_key)
+#             serverChan(output, server_key)
             break
 
 
