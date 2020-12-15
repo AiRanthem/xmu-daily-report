@@ -210,10 +210,10 @@ def main():
             continue
         else:
             # 开启邮件推送
-            sendMail(output)
+#             sendMail(output)
             
             # 开启Server酱推送
-#             serverChan(output)
+            serverChan(output)
 
             break
 
