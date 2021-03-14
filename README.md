@@ -1,44 +1,38 @@
-# xmu-daily-form
+# xmu-daily-report
 厦大Daily Health Report 健康打卡自动填写脚本
-**声明：使用该项目造成的一切后果本人概不负责**
 
-## 缘由
-昨天刚接触到selenium，觉得有趣，写一个简单的项目练练手
-## 状态：ver 0.2
-版本0.2，该脚本属于可用状态，我今天的表格就是用这个它填的（逃）
+如果以后厦大有类似异常烦人的需要每天完成的机械任务，我会在这个仓库中同步更新相应脚本，维护到我研究生毕业。也希望大家自信编写脚本并提PR。
 
-由于这个系统登陆方式错综复杂（可能只有我是用第二个按钮登陆的），暂时没有做自动登录功能。第一次使用需要手动登录。
+**声明：使用该项目请遵循MIT协议**
 
-最后需要用户确认提交，暂时没有做自动确认，后续版本会补上自动确认和自动登录功能。
+## Version 1.0
+使用 [playwright-python](https://github.com/microsoft/playwright-python) 替代selenium重写，实现一键安装和部署，简化使用
 
-BUG fix: fix the bug that the script stops after user logged in
-## How to Use
-```bash
-git clone git@github.com:AiRanthem/xmu-daily-form.git
-cd xmu-daily-form/tools
-pip install -r requirements.txt
-cd ..
-# download your chromedriver executable to ./driver
-python main.py
+## 使用准备
+
+### requirements
++ 需要python3.7以上的版本，若没有请自行登录[python.org](python.org)下载。Windows用户可以在Microsoft Store中搜索 python 直接安装。
+
+### installation
+在终端中执行以下命令：
+
+```shell
+pip install playwright -i https://pypi.douban.com/simple
+python -m playwright install chromium
 ```
-## 使用方法（手把手版）
-### 注意，该安装文档提供的资源仅针对windows用户，mac用户请自行下载对应软件包。（如果你用Linux的话还要看安装方法？）
-1. 点击右上角`Clone or download`下载压缩包并解压
-2. 打开[tools](./tools)文件夹，安装python3.7
-3. 双击[install-requirements.py](tools/install-requirements.py)，按照提示安装依赖
-    >如果没有打开命令行而是打开了文本编辑器，请右键点击它选择 打开方式->python
 
-4. 打开chrome，在地址栏输入`chrome://version`，查看第一行的版本，第一位就是版本号
-    >比如我的chrome版本是80.0.3987.132，版本号就是80
+## 使用方法
 
-5. 如果你的版本号不是80，请访问[这里](https://sites.google.com/a/chromium.org/chromedriver/downloads)下载对应版本的chromedriver，替换掉[driver](./driver)文件夹里的`chromedriver.exe`(没有后缀名的那个是Linux版，开发用的，可以删除)
-5. 回到[xmu-daily-form](.)中，和第三步一样运行[how_to_use.py](./how_to_use.py)即可。
-## update 0.2
-1. BUG fix: fix the bug that the script stops after user logged in
-3. todo：自动提交和手动提交的切换
-4. todo：自动登录
+### 本地运行
+```shell
+python run.py 脚本名
+# example: python run.py daily-report
+```
+目前支持的脚本有
++ daily-report（每日健康打卡）
 
 ## log
-+ 2020/3/13: 施工开始
-+ 2020/3/13: 完成0.1版本
++ 2020/3/13: 项目开始
++ 2020/3/13: 完成使用selenium的0.1版本
 + 2020/3/14: version 0.2 update, bug fix
++ 2021/3/14: 一周年，version 1.0，使用playwright重写，大幅简化安装流程和使用方法。
