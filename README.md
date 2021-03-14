@@ -24,6 +24,8 @@ python -m playwright install chromium
 ## 使用方法
 
 ### 本地运行
+首先请按照提示编辑[script目录中的config.py文件](./scripts/config.py)
+
 ```shell
 python run.py 脚本名
 # example: python run.py daily-report
