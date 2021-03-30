@@ -64,6 +64,7 @@ def checkin():
     driver.get(Login_URL)
     
     # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
+    logintab = driver.find_element_by_class_name('login-box')
     login = WebDriverWait(driver, 10).until(lambda logintab: logintab.find_element_by_id("//*[@id="login"]"))
     user = logintab.find_element_by_id('user_name')
     pwd = logintab.find_element_by_xpath("//*[@id="form"]/div[3]/div/input")
