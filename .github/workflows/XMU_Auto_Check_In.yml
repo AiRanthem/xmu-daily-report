@@ -36,6 +36,7 @@ jobs:
       env:
           USERNAME: ${{ secrets.USERNAME }}
           PASSWD: ${{ secrets.PASSWD }}
+          PASSWD_VPN: ${{ secrets.PASSWD_VPN }}
           FROM_ADDR: ${{ secrets.FROM_ADDR }}
           MAIL_PWD: ${{ secrets.MAIL_PWD }}
           TO_ADDR: ${{ secrets.TO_ADDR }}
