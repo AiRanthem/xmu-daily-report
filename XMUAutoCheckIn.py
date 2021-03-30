@@ -52,15 +52,24 @@ Checkin_URL = 'https://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e
 
 
 def checkin():
-    # XMU统一身份认证用户名密码
+    # XMU统一身份认证用户名密码(passwd_vpn是WebVPN登录密码，可能不一样，因此多设一个位置，若一样，secret里填写一样即可）
     username = os.environ['USERNAME'].split('#')
     passwd = os.environ['PASSWD'].split('#')
+    passwd-vpn = os.environ['PASSWD_VPN'].split('#')
     
     driver = webdriver.Chrome(options=chrome_options)
     driver.maximize_window()
 
     # 进入登录页面
     driver.get(Login_URL)
+    
+    # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
+    login = WebDriverWait(driver, 10).until(lambda logintab: logintab.find_element_by_id("//*[@id="login"]"))
+    user = logintab.find_element_by_id('user_name')
+    pwd = logintab.find_element_by_xpath("//*[@id="form"]/div[3]/div/input")
+    user.send_keys(username)
+    pwd.send_keys(passwd_vpn)
+    login.click()
 
     # 选择统一身份认证登录跳转到真正的登录页面
     login = driver.find_element_by_xpath("//*[@class='buttonBox']/button[2]")
