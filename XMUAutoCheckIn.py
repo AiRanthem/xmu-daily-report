@@ -67,7 +67,7 @@ def checkin():
     logintab = driver.find_element_by_class_name('login-box')
     login = WebDriverWait(driver, 10).until(lambda logintab: logintab.find_element_by_id('login'))
     user = logintab.find_element_by_id('user_name')
-    pwd = logintab.find_element_by_xpath("//*[@id="form"]/div[3]/div/input")
+    pwd = logintab.find_element_by_xpath("//*[@id='form']/div[3]/div/input")
     user.send_keys(username)
     pwd.send_keys(passwd_vpn)
     login.click()
