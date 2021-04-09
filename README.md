@@ -8,6 +8,7 @@
 2. 在`Settings->Secrets`下新建两个`Secrets`：
    + `USERNAME`：你的XMU用户名
    + `PASSWD`：统一身份认证的密码
+   + `PASSWD_VPN`：WebVPN的密码
 3. 在`Action`下允许`workflow`运行；
 4. 提交一次修改触发`workflow`，比如可以修改一下`README.md`。
 test
@@ -22,7 +23,7 @@ test
 
 若不想开启邮件推送，请根据注释提示，将`XMUAutoCheckIn.py`脚本最后的相关内容注释掉。
 
-## Server酱推送
+## Server酱推送(四月底将停止微信推送，可以转用企业微信或邮箱）
 
 邮件推送可能比较麻烦，因此也添加了Server酱推送部分。前往http://sc.ftqq.com/ 获得个人的`SCKEY`，然后添加一条`Secrets`：
 
