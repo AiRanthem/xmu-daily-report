@@ -1,6 +1,6 @@
 # XMU每日打卡
 
-此项目托管于``Github Action``进行XMU的每日健康打卡，仅供交流学习使用。
+此项目托管于``Github Action``进行XMU的每日健康打卡，仅供交流学习使用。1
 
 ## Action执行打卡
 
