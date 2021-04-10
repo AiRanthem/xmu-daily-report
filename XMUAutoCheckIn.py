@@ -72,10 +72,10 @@ def checkin():
 #     pwd.send_keys(passwd_vpn)
 #     login.click()
 
-#     # 选择统一身份认证登录跳转到真正的登录页面
+    # 选择统一身份认证登录跳转到真正的登录页面
 #     driver.get(Login_URL)
-#     login = driver.find_element_by_xpath("//*[@id='loginLayout']/div[3]/div[2]/div/button[2]")
-#     login.click()
+    login = driver.find_element_by_xpath("//*[@id='loginLayout']/div[3]/div[2]/div/button[2]")
+    login.click()
 
     # 查找页面元素，如果某些元素查找不到则返回错误
     while True:
