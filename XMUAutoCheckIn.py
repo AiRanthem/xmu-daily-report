@@ -44,7 +44,7 @@ chrome_options.add_argument('blink-settings=imagesEnabled=false')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-登录url和打卡url
+# 登录url和打卡url
 Login_URL = 'https://xmuxg.xmu.edu.cn/login'
 Checkin_URL = 'https://xmuxg.xmu.edu.cn/app/214'
 # Login_URL = 'https://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/login'
