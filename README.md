@@ -8,16 +8,15 @@
 2. 在`Settings->Secrets`下新建两个`Secrets`：
    + `USERNAME`：你的XMU用户名
    + `PASSWD`：统一身份认证的密码
-   + `PASSWD_VPN`：WebVPN的密码
 3. 在`Action`下允许`workflow`运行；
 4. 提交一次修改触发`workflow`，比如可以修改一下`README.md`。
-test
+
 ## 邮件推送
 
 出于某些考量，本项目添加了邮件推送服务。只需要另外再添加四个`Secrets`：
 
 + `FROM_ADDR`：发件人邮箱；
-+ `MAIL_PASSWD`：邮箱授权密码，不是登录密码，需要注意；
++ `MAIL_PWD`：邮箱授权密码，不是登录密码，需要注意；
 + `TO_ADDR`：收件人邮箱；
 + `SMTP_SERVER`：发件人邮箱的smtp服务器地址。
 
