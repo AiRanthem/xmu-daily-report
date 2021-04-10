@@ -11,7 +11,7 @@
    + `PASSWD_VPN`：WebVPN的密码
 3. 在`Action`下允许`workflow`运行；
 4. 提交一次修改触发`workflow`，比如可以修改一下`README.md`。
-test
+
 ## 邮件推送
 
 出于某些考量，本项目添加了邮件推送服务。只需要另外再添加四个`Secrets`：
