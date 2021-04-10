@@ -217,7 +217,7 @@ def serverChan(output):
 
 def main():
     # 先暂停一个随机时间规避通过打卡时间检查脚本打卡
-    time.sleep(random.randint(0, 300))
+    time.sleep(random.randint(0, 30))
 
     # 当打卡失败时自动重新运行打卡功能
     while True:
@@ -227,10 +227,10 @@ def main():
             continue
         else:
             # 开启邮件推送
-#             sendMail(output)
+            sendMail(output)
             
             # 开启Server酱推送
-            serverChan(output)
+            # serverChan(output)
 
             break
 
