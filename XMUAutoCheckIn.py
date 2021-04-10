@@ -150,7 +150,7 @@ def checkin():
                 return '打卡失败'
 
         # 点击保存按钮
-        save = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[@class='preview-container']/div[1]/div[1]/span[1]/span[1]"))
+        save = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[@id='preview1618033083866']/div/span/span"))
         save.click()
 
         time.sleep(1)
