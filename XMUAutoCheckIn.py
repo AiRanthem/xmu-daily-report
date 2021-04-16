@@ -188,7 +188,7 @@ def sendMail(output):
     msg = MIMEText(output, 'plain', 'utf-8')
     msg['From'] = _format_addr('XMU每日打卡 <%s>' % from_addr)
     msg['To'] = _format_addr('你可真是怠惰呢 <%s>' % to_addr)
-    msg['Subject'] = Header('每日打卡结果反馈', 'utf-8').encode()
+    msg['Subject'] = Header(f'打卡结果 {output[:6]}', 'utf-8').encode()
 
     server = smtplib.SMTP_SSL(smtp_server, 465)
     server.set_debuglevel(1)
