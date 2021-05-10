@@ -8,7 +8,6 @@
 2. 在`Settings->Secrets`下新建两个`Secrets`：
    + `USERNAME`：你的XMU用户名
    + `PASSWD`：统一身份认证的密码
-   + `PASSWD_VPN`：WebVPN的密码
 3. 在`Action`下允许`workflow`运行；
 4. 提交一次修改触发`workflow`，比如可以修改一下`README.md`。
 
