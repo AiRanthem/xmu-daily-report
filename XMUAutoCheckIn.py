@@ -55,7 +55,7 @@ def checkin():
     # XMU统一身份认证用户名密码(passwd_vpn是WebVPN登录密码，可能不一样，因此多设一个位置，若一样，secret里填写一样即可）
     username = os.environ['USERNAME'].split('#')
     passwd = os.environ['PASSWD'].split('#')
-    passwd_vpn = os.environ['PASSWD_VPN'].split('#')
+    passwd_vpn = os.environ['PASSWD'].split('#')
     
     driver = webdriver.Chrome(options=chrome_options)
     driver.maximize_window()
