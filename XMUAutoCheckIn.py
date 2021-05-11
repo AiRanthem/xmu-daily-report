@@ -1,22 +1,18 @@
-from selenium import webdriver
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
-import os
-import time
 import logging
+import os
 import random
-
-from email import encoders
+import smtplib
+import time
 from email.header import Header
 from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
-import smtplib
 
 import requests
-
+from selenium import webdriver
 # chrome可选配置，部分功能经检测影响脚本运行所以关掉
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.wait import WebDriverWait
+
 chrome_options = Options()
 # 添加UA
 # chrome_options.add_argument('user-agent="MQQBrowser/26 Mozilla/5.0 (Linux; U; Android 2.3.7; zh-cn; MB200 Build/GRJ22; CyanogenMod-7) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1"')
@@ -24,7 +20,7 @@ chrome_options = Options()
 # chrome_options.add_argument('window-size=1920x3000')
 # 谷歌文档提到需要加上这个属性来规避bug
 chrome_options.add_argument('--disable-gpu')
- # 隐藏滚动条, 应对一些特殊页面
+# 隐藏滚动条, 应对一些特殊页面
 chrome_options.add_argument('--hide-scrollbars')
 # 不加载图片, 提升速度
 chrome_options.add_argument('blink-settings=imagesEnabled=false')
@@ -56,7 +52,7 @@ def checkin():
     username = os.environ['USERNAME'].split('#')
     passwd = os.environ['PASSWD'].split('#')
     passwd_vpn = os.environ['PASSWD'].split('#')
-    
+
     driver = webdriver.Chrome(options=chrome_options)
     driver.maximize_window()
 
@@ -66,7 +62,7 @@ def checkin():
     driver.get(Login_URL)
 
     logger.info("请求页面")
-    
+
     # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
     logintab = driver.find_element_by_class_name('login-box')
     login = WebDriverWait(driver, 10).until(lambda logintab: logintab.find_element_by_id('login'))
@@ -86,7 +82,8 @@ def checkin():
         try:
             logger.info("进入登录页面")
             logintab = driver.find_element_by_class_name('auth_tab_content')
-            login = WebDriverWait(driver, 10).until(lambda logintab: logintab.find_element_by_xpath("//*[@id='casLoginForm']/p[4]/button"))
+            login = WebDriverWait(driver, 10).until(
+                lambda logintab: logintab.find_element_by_xpath("//*[@id='casLoginForm']/p[4]/button"))
             user = logintab.find_element_by_id('username')
             pwd = logintab.find_element_by_id('password')
             logger.info("已定位到元素")
@@ -107,7 +104,8 @@ def checkin():
     # 获取 “我的表单”
     while True:
         try:
-            form = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[@id='mainM']/div/div/div/div[1]/div[2]/div/div[3]/div[2]"))
+            form = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(
+                "//*[@id='mainM']/div/div/div/div[1]/div[2]/div/div[3]/div[2]"))
             form.click()
             logger.info("获取\"我的表单\"成功")
             break
@@ -119,7 +117,8 @@ def checkin():
     # 查找框内文本
     while True:
         try:
-            text = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[@id='select_1582538939790']/div/div/span[1]").text)
+            text = WebDriverWait(driver, 10).until(
+                lambda driver: driver.find_element_by_xpath("//*[@id='select_1582538939790']/div/div/span[1]").text)
             logger.info("查找框内文本成功")
             break
         except:
@@ -132,7 +131,8 @@ def checkin():
         now = time.time()
         while True:
             try:
-                yes = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//*[@id='select_1582538939790']/div/div"))
+                yes = WebDriverWait(driver, 10).until(
+                    lambda driver: driver.find_element_by_xpath("//*[@id='select_1582538939790']/div/div"))
                 yes.click()
                 logger.info("点击\"是\"成功")
                 break
@@ -144,7 +144,8 @@ def checkin():
         now = time.time()
         while True:
             try:
-                yes = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("/html/body/div[8]/ul/div/div[3]/li/label"))
+                yes = WebDriverWait(driver, 10).until(
+                    lambda driver: driver.find_element_by_xpath("/html/body/div[8]/ul/div/div[3]/li/label"))
                 yes.click()
                 logger.info("确认\"是\"成功")
                 break
@@ -154,7 +155,8 @@ def checkin():
                 return '打卡失败'
 
         # 点击保存按钮
-        save = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath("//span[starts-with(text(),'保存')][1]"))
+        save = WebDriverWait(driver, 10).until(
+            lambda driver: driver.find_element_by_xpath("//span[starts-with(text(),'保存')][1]"))
         save.click()
 
         time.sleep(1)
@@ -184,7 +186,7 @@ def sendMail(output):
     to_addr = to_addr.join(os.environ['TO_ADDR'].split('#'))
     smtp_server = ""
     smtp_server = smtp_server.join(os.environ['SMTP_SERVER'].split('#'))
-    
+
     msg = MIMEText(output, 'plain', 'utf-8')
     msg['From'] = _format_addr('XMU每日打卡 <%s>' % from_addr)
     msg['To'] = _format_addr('你可真是怠惰呢 <%s>' % to_addr)
@@ -204,10 +206,11 @@ def serverChan(output):
     # server酱的key
     server_key = ""
     server_key = server_key.join(os.environ['SERVER_KEY'].split('#'))
-    
-    api = "https://sc.ftqq.com/%s.send"%(server_key)
+
+    api = "https://sc.ftqq.com/%s.send" % (server_key)
     title = u"XMU每日打卡"
-    headers = {'User-Agent':'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/62.0.3202.94 Safari/537.36'}
     msg = {
         "text": title,
         "desp": output
@@ -219,20 +222,25 @@ def main():
     # 先暂停一个随机时间规避通过打卡时间检查脚本打卡
     time.sleep(random.randint(0, 30))
 
-    # 当打卡失败时自动重新运行打卡功能
-    while True:
-        output = checkin()
-        logger.info(output)
-        if output == '打卡失败':
-            continue
-        else:
-            # 开启邮件推送
-            sendMail(output)
-            
-            # 开启Server酱推送
-            # serverChan(output)
+    # 10次重试
+    for i in range(1, 11):
+        logger.info(f'第{i}次尝试')
+        try:
+            output = checkin()
+            logger.info(output)
+            if output == '打卡失败':
+                continue
+            else:
+                # 开启邮件推送
+                sendMail(output)
 
-            break
+                # 开启Server酱推送
+                # serverChan(output)
+
+                exit(0)
+        except Exception as e:
+            logger.error(e)
+    sendMail('重试10次后依然打卡失败，请排查日志')
 
 
 if __name__ == '__main__':
