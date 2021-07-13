@@ -219,8 +219,6 @@ def serverChan(output):
 
 
 def main():
-    # 先暂停一个随机时间规避通过打卡时间检查脚本打卡
-    time.sleep(random.randint(0, 30))
 
     # 10次重试
     for i in range(1, 11):
