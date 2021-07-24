@@ -1,6 +1,5 @@
 import logging
 import os
-import random
 import smtplib
 import time
 from email.header import Header
@@ -71,10 +70,12 @@ def checkin():
     user.send_keys(username)
     pwd.send_keys(passwd_vpn)
     login.click()
+    time.sleep(1)
 
     # 选择统一身份认证登录跳转到真正的登录页面
     driver.get(Login_URL)
-    login = driver.find_element_by_xpath("//button[contains(text(),'统一身份认证')]")
+    login = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath("//button[contains(text(),'统一身份认证')]"))
+    # login = driver.find_element_by_xpath("//button[contains(text(),'统一身份认证')]")
     login.click()
 
     # 查找页面元素，如果某些元素查找不到则返回错误
@@ -221,7 +222,7 @@ def serverChan(output):
 def main():
 
     # 10次重试
-    for i in range(1, 11):
+    for i in range(1, 2):
         logger.info(f'第{i}次尝试')
         try:
             output = checkin()
