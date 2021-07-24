@@ -2,6 +2,7 @@ import logging
 import os
 import smtplib
 import time
+import traceback
 from email.header import Header
 from email.mime.text import MIMEText
 from email.utils import parseaddr, formataddr
@@ -64,7 +65,7 @@ def checkin():
 
     # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
     logintab = driver.find_element_by_class_name('login-box')
-    login = WebDriverWait(driver, 10).until(lambda logintab: logintab.find_element_by_id('login'))
+    login = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_id('login'))
     user = logintab.find_element_by_id('user_name')
     pwd = logintab.find_element_by_xpath("//*[@id='form']/div[3]/div/input")
     user.send_keys(username)
@@ -84,7 +85,7 @@ def checkin():
             logger.info("进入登录页面")
             logintab = driver.find_element_by_class_name('auth_tab_content')
             login = WebDriverWait(driver, 10).until(
-                lambda logintab: logintab.find_element_by_xpath("//*[@id='casLoginForm']/p[4]/button"))
+                lambda x: x.find_element_by_xpath("//*[@id='casLoginForm']/p[4]/button"))
             user = logintab.find_element_by_id('username')
             pwd = logintab.find_element_by_id('password')
             logger.info("已定位到元素")
@@ -105,7 +106,7 @@ def checkin():
     # 获取 “我的表单”
     while True:
         try:
-            form = WebDriverWait(driver, 10).until(lambda driver: driver.find_element_by_xpath(
+            form = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath(
                 "//*[@id='mainM']/div/div/div/div[1]/div[2]/div/div[3]/div[2]"))
             form.click()
             logger.info("获取\"我的表单\"成功")
@@ -119,7 +120,7 @@ def checkin():
     while True:
         try:
             text = WebDriverWait(driver, 10).until(
-                lambda driver: driver.find_element_by_xpath("//*[@id='select_1582538939790']/div/div/span[1]").text)
+                lambda x: x.find_element_by_xpath("//*[@id='select_1582538939790']/div/div/span[1]").text)
             logger.info("查找框内文本成功")
             break
         except:
@@ -129,11 +130,10 @@ def checkin():
 
     # 定位填“是”的页面
     if text == '请选择':
-        now = time.time()
         while True:
             try:
                 yes = WebDriverWait(driver, 10).until(
-                    lambda driver: driver.find_element_by_xpath("//*[@id='select_1582538939790']/div/div"))
+                    lambda x: x.find_element_by_xpath("//*[@id='select_1582538939790']/div/div"))
                 yes.click()
                 logger.info("点击\"是\"成功")
                 break
@@ -146,7 +146,7 @@ def checkin():
         while True:
             try:
                 yes = WebDriverWait(driver, 10).until(
-                    lambda driver: driver.find_element_by_xpath("/html/body/div[8]/ul/div/div[3]/li/label"))
+                    lambda x: x.find_element_by_xpath("/html/body/div[8]/ul/div/div[3]/li/label"))
                 yes.click()
                 logger.info("确认\"是\"成功")
                 break
@@ -157,12 +157,12 @@ def checkin():
 
         # 点击保存按钮
         save = WebDriverWait(driver, 10).until(
-            lambda driver: driver.find_element_by_xpath("//span[starts-with(text(),'保存')][1]"))
+            lambda x: x.find_element_by_xpath("//span[starts-with(text(),'保存')][1]"))
         save.click()
 
         time.sleep(1)
         # 保存确定
-        driver.switch_to_alert().accept()
+        driver.switch_to.alert().accept()
         time.sleep(3)
         output = '打卡成功'
     elif text == '是 Yes':
@@ -222,7 +222,7 @@ def serverChan(output):
 def main():
 
     # 10次重试
-    for i in range(1, 2):
+    for i in range(1, 11):
         logger.info(f'第{i}次尝试')
         try:
             output = checkin()
@@ -239,6 +239,7 @@ def main():
                 exit(0)
         except Exception as e:
             logger.error(e)
+            traceback.print_exc()
     sendMail('重试10次后依然打卡失败，请排查日志')
 
 
