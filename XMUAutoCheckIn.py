@@ -162,7 +162,7 @@ def checkin():
 
         time.sleep(1)
         # 保存确定
-        driver.switch_to.alert().accept()
+        driver.switch_to.alert.accept()
         time.sleep(3)
         output = '打卡成功'
     elif text == '是 Yes':
