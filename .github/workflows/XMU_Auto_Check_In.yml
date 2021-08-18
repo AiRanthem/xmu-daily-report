@@ -42,6 +42,8 @@ jobs:
           TO_ADDR: ${{ secrets.TO_ADDR }}
           SMTP_SERVER: ${{ secrets.SMTP_SERVER }}
           SERVER_KEY: ${{ secrets.SERVER_KEY }}
+          CONFIG: ${{ secrets.CONFIG }}
+          ENV: prod
           TZ: Asia/Shanghai
           # 时区配置为Asia/Shanghai
       run: |
