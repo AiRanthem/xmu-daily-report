@@ -140,16 +140,17 @@ def checkin(username, passwd, passwd_vpn):
                 return '打卡失败'
 
         # 点击保存按钮
-        save = WebDriverWait(driver, 10).until(
-            lambda x: x.find_element_by_xpath("//span[starts-with(text(),'保存')][1]"))
-        save.click()
+        if not debug:
+            save = WebDriverWait(driver, 10).until(
+                lambda x: x.find_element_by_xpath("//span[starts-with(text(),'保存')][1]"))
+            save.click()
 
         time.sleep(1)
         # 保存确定
         driver.switch_to.alert.accept()
         time.sleep(3)
         output = '打卡成功'
-    elif text == '是 Yes':
+    else:
         output = '今日已打卡'
     driver.close()
     return output
