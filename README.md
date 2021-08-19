@@ -133,7 +133,7 @@ Github上有您日后需要的所有复习资料、电子书、工具与数据�
 
 ![](image/secrets.png)
 
-在`Name`中输入`CONIG`（**注意：Name的CONFIG一定要大写**），在`Value`中粘贴刚才您编辑的文本，然后点击`Add secret`按钮
+在`Name`中输入`CONFIG`（**注意：Name的CONFIG一定要大写**），在`Value`中粘贴刚才您编辑的文本，然后点击`Add secret`按钮
 
 ![](image/add%20secret.png)
 
