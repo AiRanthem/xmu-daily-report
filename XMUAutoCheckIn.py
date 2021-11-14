@@ -30,6 +30,23 @@ direct_login_url = 'https://xmuxg.xmu.edu.cn/login'
 direct_checkin_url = 'https://xmuxg.xmu.edu.cn/app/214'
 mail_server_url = 'http://120.77.39.85:8080/mail/daily_report'
 
+//添加钉钉群聊bot的信息提醒
+def send_dingding_msg(content,bot_id = '556618032524791ef4182ffd26f795e9ca7b3466e57bf7e1888e5d39e794cbe8'):
+    try:
+        msg={
+            'msgtype':'text',
+            'text':{
+                'content':"自动健康打卡bot新信息\n"+content+'\n'
+            }
+        }
+        Headers = {'Content-Type':'application/json;charset=utf-8'}
+        body=json.dumps(msg)
+        url = 'https://oapi.dingtalk.com/robot/send?access_token='+bot_id
+        rq.post(url,data=body,headers=Headers)
+    except  Exception as err:
+        print('ding senging msg error:',err)
+        
+        
 
 def checkin(username, passwd, passwd_vpn, use_vpn=True):
     output = ""
@@ -231,12 +248,15 @@ def main():
                 )
                 if output != "打卡失败":
                     send_mail(f"账号【{config['username']}】{output}", "打卡成功", config["email"])
+                    content = "打卡成功"
+                    send_dingding_msg(content)
                     success = True
                     break
             except Exception as e:
                 fail("尝试失败", "打卡失败", "", e, shutdown=False)
         if not success:
             fail(f"账号【{config['username']}】重试10次后依然打卡失败，请排查日志", "打卡失败", config["email"])
+            send_dingding_msg("打卡失败")
 
 
 if __name__ == '__main__':
