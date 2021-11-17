@@ -24,18 +24,22 @@ chrome_options.add_argument('blink-settings=imagesEnabled=false')
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-login_url = 'https://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/login'
-checkin_url = 'https://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/app/214'
+vpn_login_url = 'https://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/login'
+vpn_checkin_url = 'https://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/app/214'
+direct_login_url = 'https://xmuxg.xmu.edu.cn/login'
+direct_checkin_url = 'https://xmuxg.xmu.edu.cn/app/214'
 mail_server_url = 'http://120.77.39.85:8080/mail/daily_report'
 
 
-def checkin(username, passwd, passwd_vpn):
+def checkin(username, passwd, passwd_vpn, use_vpn=True):
     output = ""
     if debug:
         driver = webdriver.Edge()
     else:
         driver = webdriver.Chrome(options=chrome_options)
     driver.maximize_window()
+    login_url = vpn_login_url if use_vpn else direct_login_url
+    checkin_url = vpn_checkin_url if use_vpn else direct_checkin_url
 
     logger.info("准备工作完成")
 
@@ -44,18 +48,18 @@ def checkin(username, passwd, passwd_vpn):
 
     logger.info("请求页面")
 
-    # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
-    logintab = driver.find_element_by_class_name('login-box')
-    login = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_id('login'))
-    user = logintab.find_element_by_id('user_name')
-    pwd = logintab.find_element_by_xpath("//*[@id='form']/div[3]/div/input")
-    user.send_keys(username)
-    pwd.send_keys(passwd_vpn)
-    login.click()
-    time.sleep(1)
+    if use_vpn:
+        # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
+        logintab = driver.find_element_by_class_name('login-box')
+        login = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_id('login'))
+        user = logintab.find_element_by_id('user_name')
+        pwd = logintab.find_element_by_xpath("//*[@id='form']/div[3]/div/input")
+        user.send_keys(username)
+        pwd.send_keys(passwd_vpn)
+        login.click()
+        time.sleep(1)
 
     # 选择统一身份认证登录跳转到真正的登录页面
-    driver.get(login_url)
     login = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath("//button[contains(text(),'统一身份认证')]"))
     login.click()
 
@@ -94,6 +98,7 @@ def checkin(username, passwd, passwd_vpn):
             break
         except Exception as e:
             logger.warning(e)
+            traceback.print_exc()
             logger.info("获取\"我的表单\"失败")
             driver.close()
             return '打卡失败'
@@ -147,9 +152,14 @@ def checkin(username, passwd, passwd_vpn):
 
         time.sleep(1)
         # 保存确定
-        driver.switch_to.alert.accept()
-        time.sleep(3)
-        output = '打卡成功'
+        try:
+            if not debug:
+                driver.switch_to.alert.accept()
+            time.sleep(1)
+            output = '打卡成功'
+        except Exception as e:
+            traceback.print_exc()
+            output = '打卡失败'
     else:
         output = '今日已打卡'
     driver.close()
@@ -157,8 +167,9 @@ def checkin(username, passwd, passwd_vpn):
 
 
 def send_mail(msg: str, title: str, to: str):
-    post = requests.post(mail_server_url, data=json.dumps({"title": title, "body": msg, "dest": to}))
-    return post
+    if not debug:
+        post = requests.post(mail_server_url, data=json.dumps({"title": title, "body": msg, "dest": to}))
+        return post
 
 
 CONFIG_KEYS = ["username", "password", "password_vpn", "email"]
@@ -178,7 +189,11 @@ def fail(msg: str, title: str, email: str = "", e: Exception = None, shutdown=Tr
 
 def get_configs() -> List[dict]:
     try:
-        configs = json.loads(os.getenv("CONFIG"))["config"]
+        if debug:
+            with open("config.json") as f:
+                configs = json.load(f)["config"]
+        else:
+            configs = json.loads(os.getenv("CONFIG"))["config"]
         for i, config in enumerate(configs):
             for k in CONFIG_KEYS:
                 if k not in config.keys():
@@ -204,9 +219,17 @@ def main():
                     config["password_vpn"]
                 )
                 logger.info(output)
-                if output == "打卡失败":
-                    continue
-                else:
+                if output != "打卡失败":
+                    send_mail(f"账号【{config['username']}】{output}", "打卡成功", config["email"])
+                    success = True
+                    break
+                logger.info("通过VPN打卡失败，尝试直接连接")
+                output = checkin(
+                    config["username"],
+                    config["password"],
+                    config["password_vpn"], False
+                )
+                if output != "打卡失败":
                     send_mail(f"账号【{config['username']}】{output}", "打卡成功", config["email"])
                     success = True
                     break
