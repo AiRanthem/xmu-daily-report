@@ -5,6 +5,9 @@ import time
 import traceback
 from typing import List
 
+import random
+import calendar
+
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -21,7 +24,8 @@ chrome_options.add_argument('--hide-scrollbars')
 chrome_options.add_argument('blink-settings=imagesEnabled=false')
 
 # 日志配置
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
 vpn_login_url = 'http://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/login'
@@ -29,6 +33,16 @@ vpn_checkin_url = 'http://webvpn.xmu.edu.cn/https/77726476706e697374686562657374
 direct_login_url = 'http://xmuxg.xmu.edu.cn/login'
 direct_checkin_url = 'http://xmuxg.xmu.edu.cn/app/214'
 mail_server_url = 'http://120.77.39.85:8080/mail/daily_report'
+
+
+def random_second() -> int:
+    return random.randrange(start=0, stop=3600, step=1)
+
+
+def unix_timestamp() -> int:
+    gmt = time.gmtime()
+    ts: int = calendar.timegm(gmt)
+    return ts
 
 
 def checkin(username, passwd, passwd_vpn, use_vpn=True):
@@ -51,16 +65,19 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
     if use_vpn:
         # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
         logintab = driver.find_element_by_class_name('login-box')
-        login = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_id('login'))
+        login = WebDriverWait(driver, 10).until(
+            lambda x: x.find_element_by_id('login'))
         user = logintab.find_element_by_id('user_name')
-        pwd = logintab.find_element_by_xpath("//*[@id='form']/div[3]/div/input")
+        pwd = logintab.find_element_by_xpath(
+            "//*[@id='form']/div[3]/div/input")
         user.send_keys(username)
         pwd.send_keys(passwd_vpn)
         login.click()
         time.sleep(1)
 
     # 选择统一身份认证登录跳转到真正的登录页面
-    login = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath("//button[contains(text(),'统一身份认证')]"))
+    login = WebDriverWait(driver, 10).until(
+        lambda x: x.find_element_by_xpath("//button[contains(text(),'统一身份认证')]"))
     login.click()
 
     # 查找页面元素，如果某些元素查找不到则返回错误
@@ -168,7 +185,8 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
 
 def send_mail(msg: str, title: str, to: str):
     if not debug:
-        post = requests.post(mail_server_url, data=json.dumps({"title": title, "body": msg, "dest": to}))
+        post = requests.post(mail_server_url, data=json.dumps(
+            {"title": title, "body": msg, "dest": to}))
         return post
 
 
@@ -199,7 +217,8 @@ def get_configs() -> List[dict]:
                 if k not in config.keys():
                     fail(f"第{i + 1}个配置缺少配置项{k}", "配置错误", run_fail=True)
                 if not isinstance(config[k], str):
-                    fail(f"第{i + 1}个配置的配置项{k}不是字符串，请加上双引号", "配置错误", run_fail=True)
+                    fail(f"第{i + 1}个配置的配置项{k}不是字符串，请加上双引号",
+                         "配置错误", run_fail=True)
         return configs
     except Exception as e:
         fail("配置读取失败，请检查配置", "配置错误", e=e, run_fail=True)
@@ -220,7 +239,8 @@ def main():
                 )
                 logger.info(output)
                 if output != "打卡失败":
-                    send_mail(f"账号【{config['username']}】{output}", "打卡成功", config["email"])
+                    send_mail(
+                        f"账号【{config['username']}】{output}", "打卡成功", config["email"])
                     success = True
                     break
                 logger.info("通过VPN打卡失败，尝试直接连接")
@@ -230,14 +250,24 @@ def main():
                     config["password_vpn"], False
                 )
                 if output != "打卡失败":
-                    send_mail(f"账号【{config['username']}】{output}", "打卡成功", config["email"])
+                    send_mail(
+                        f"账号【{config['username']}】{output}", "打卡成功", config["email"])
                     success = True
                     break
             except Exception as e:
                 fail("尝试失败", "打卡失败", "", e, shutdown=False)
         if not success:
-            fail(f"账号【{config['username']}】重试10次后依然打卡失败，请排查日志", "打卡失败", config["email"])
+            fail(f"账号【{config['username']}】重试10次后依然打卡失败，请排查日志",
+                 "打卡失败", config["email"])
 
 
 if __name__ == '__main__':
+    
+    time_start: int = unix_timestamp()
+    time_end: int = time_start + random_second()
+
+    while True:
+        if unix_timestamp() > time_end:
+            break
+
     main()
