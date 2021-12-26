@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import traceback
+import random
 from typing import List
 
 import requests
@@ -30,6 +31,10 @@ direct_login_url = 'https://xmuxg.xmu.edu.cn/login'
 direct_checkin_url = 'https://xmuxg.xmu.edu.cn/app/214'
 mail_server_url = 'http://120.77.39.85:8080/mail/daily_report'
 
+#添加随机数，在一小时之内随机打卡 
+def random_time():
+    ret = int((random.random()*10000) % 3600)
+    return ret
 
 def checkin(username, passwd, passwd_vpn, use_vpn=True):
     output = ""
@@ -240,4 +245,5 @@ def main():
 
 
 if __name__ == '__main__':
+    time.sleep(random_time())
     main()
