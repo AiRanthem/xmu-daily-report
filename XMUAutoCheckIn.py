@@ -12,6 +12,7 @@ import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.common.by import By
 
 debug = os.getenv("ENV") == "debug"
 
@@ -64,12 +65,10 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
 
     if use_vpn:
         # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
-        logintab = driver.find_element_by_class_name('login-box')
-        login = WebDriverWait(driver, 10).until(
-            lambda x: x.find_element_by_id('login'))
-        user = logintab.find_element_by_id('user_name')
-        pwd = logintab.find_element_by_xpath(
-            "//*[@id='form']/div[3]/div/input")
+        logintab = driver.find_element(by=By.CLASS_NAME, value='login-box')
+        login = WebDriverWait(driver, 10).until(lambda x: x.find_element(by=By.ID, value='login'))
+        user = logintab.find_element(by=By.ID, value='user_name')
+        pwd = logintab.find_element(by=By.XPATH, value="//*[@id='form']/div[3]/div/input")
         user.send_keys(username)
         pwd.send_keys(passwd_vpn)
         login.click()
@@ -77,18 +76,18 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
 
     # 选择统一身份认证登录跳转到真正的登录页面
     login = WebDriverWait(driver, 10).until(
-        lambda x: x.find_element_by_xpath("//button[contains(text(),'统一身份认证')]"))
+        lambda x: x.find_element(by=By.XPATH, value="//button[contains(text(),'统一身份认证')]"))
     login.click()
 
     # 查找页面元素，如果某些元素查找不到则返回错误
     while True:
         try:
             logger.info("进入登录页面")
-            logintab = driver.find_element_by_class_name('auth_tab_content')
+            logintab = driver.find_element(by=By.CLASS_NAME, value='auth_tab_content')
             login = WebDriverWait(driver, 10).until(
-                lambda x: x.find_element_by_xpath("//*[@id='casLoginForm']/p[4]/button"))
-            user = logintab.find_element_by_id('username')
-            pwd = logintab.find_element_by_id('password')
+                lambda x: x.find_element(by=By.XPATH, value="//*[@id='casLoginForm']/p[4]/button"))
+            user = logintab.find_element(by=By.ID, value='username')
+            pwd = logintab.find_element(by=By.ID, value='password')
             logger.info("已定位到元素")
             break
         except Exception as e:
@@ -108,8 +107,7 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
     # 获取 “我的表单”
     while True:
         try:
-            form = WebDriverWait(driver, 10).until(lambda x: x.find_element_by_xpath(
-                "//*[@id='mainM']/div/div/div/div[1]/div[2]/div/div[3]/div[2]"))
+            form = WebDriverWait(driver, 10).until(lambda x: x.find_element(by=By.XPATH, value="//*[@id='mainM']/div/div/div/div[1]/div[2]/div/div[3]/div[2]"))
             form.click()
             logger.info("获取\"我的表单\"成功")
             break
@@ -124,7 +122,7 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
     while True:
         try:
             text = WebDriverWait(driver, 10).until(
-                lambda x: x.find_element_by_xpath("//*[@id='select_1582538939790']/div/div/span[1]").text)
+                lambda x: x.find_element(by=By.XPATH, value="//*[@id='select_1582538939790']/div/div/span[1]").text)
             logger.info("查找框内文本成功")
             break
         except Exception as e:
@@ -138,7 +136,7 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
         while True:
             try:
                 yes = WebDriverWait(driver, 10).until(
-                    lambda x: x.find_element_by_xpath("//*[@id='select_1582538939790']/div/div"))
+                    lambda x: x.find_element(by=By.XPATH, value="//*[@id='select_1582538939790']/div/div"))
                 yes.click()
                 logger.info("点击\"是\"成功")
                 break
@@ -151,7 +149,7 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
         while True:
             try:
                 yes = WebDriverWait(driver, 10).until(
-                    lambda x: x.find_element_by_xpath("/html/body/div[8]/ul/div/div[3]/li/label"))
+                    lambda x: x.find_element(by=By.XPATH, value="/html/body/div[8]/ul/div/div[3]/li/label"))
                 yes.click()
                 logger.info("确认\"是\"成功")
                 break
@@ -164,7 +162,7 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
         # 点击保存按钮
         if not debug:
             save = WebDriverWait(driver, 10).until(
-                lambda x: x.find_element_by_xpath("//span[starts-with(text(),'保存')][1]"))
+                lambda x: x.find_element(by=By.XPATH, value="//span[starts-with(text(),'保存')][1]"))
             save.click()
 
         time.sleep(1)
