@@ -149,7 +149,7 @@ def checkin(username, passwd, passwd_vpn, use_vpn=True):
         while True:
             try:
                 yes = WebDriverWait(driver, 10).until(
-                    lambda x: x.find_element(by=By.XPATH, value="/html/body/div[8]/ul/div/div[3]/li/label"))
+                    lambda x: x.find_element(by=By.XPATH, value="//*[@class='dropdown-menu']/div/div[3]"))
                 yes.click()
                 logger.info("确认\"是\"成功")
                 break
