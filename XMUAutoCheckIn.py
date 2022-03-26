@@ -73,7 +73,7 @@ def get_text(driver: WebDriver, xpath: str, comment: str) -> str:
     return must_operate_element_by_xpath(driver, xpath, lambda x: x.text, f"获取 {comment} 文本")
 
 
-def select_dropdown(driver: WebDriver, dropdown_xpath: str, target_xpath: str, comment: str) -> bool:
+def select_dropdown(driver: WebDriver, dropdown_xpath: str, target_xpath: str, comment: str):
     click_given_xpath(driver, dropdown_xpath, f"{comment} 下拉框")
     time.sleep(1)
     click_given_xpath(driver, target_xpath, f"{comment} 选项")
@@ -90,8 +90,8 @@ def checkin(username, passwd, passwd_vpn, email, use_vpn=True) -> None:
     logger.info("准备工作完成")
 
     # 进入登录页面
+    logger.info("正在请求登录页面")
     driver.get(login_url)
-    logger.info("请求页面")
 
     if use_vpn:
         # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
@@ -223,17 +223,17 @@ def main():
                     config["username"],
                     config["password"],
                     config["password_vpn"],
-                    config['email']
+                    config['email'], False
                 )
                 return
             except RuntimeError:
-                logger.info("VPN打卡失败，尝试直连")
+                logger.info("直连打卡失败，尝试VPN")
                 try:
                     checkin(
                         config["username"],
                         config["password"],
                         config["password_vpn"],
-                        config['email']
+                        config['email'], True
                     )
                     return
                 except Exception as e:
