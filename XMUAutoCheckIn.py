@@ -28,10 +28,12 @@ chrome_options.add_argument('blink-settings=imagesEnabled=false')
 
 # 日志配置
 logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - %(levelname)s - %(message)s')
+                    format='%(asctime)s - [%(levelname)s] - %(message)s')
 logger = logging.getLogger(__name__)
 log_stream = io.StringIO()
-logger.addHandler(logging.StreamHandler(log_stream))
+handler = logging.StreamHandler(log_stream)
+handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+logger.addHandler(handler)
 
 # consts
 VPN_LOGIN_URL = 'http://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/login'
@@ -169,6 +171,7 @@ def checkin(username, passwd, passwd_vpn, email, use_vpn=True) -> None:
 
 
 def send_mail(msg: str, title: str, to: str):
+    msg += '\n\n【运行日志】\n' + log_stream.getvalue()
     if not debug:
         post = requests.post(MAIL_SERVER_URL, data=json.dumps(
             {"title": title, "body": msg, "dest": to}))
