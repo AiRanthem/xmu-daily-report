@@ -217,7 +217,9 @@ def get_configs() -> List[dict]:
 def main():
     # 10次重试
     configs = get_configs()
+    logger.info(f"已配置 {len(configs)} 个账号")
     for config in configs:
+        logger.info(f"账号【{config['username']} 正在运行")
         for i in range(1, 2 if debug else 11):
             logger.info(f'第{i}次尝试')
             try:
