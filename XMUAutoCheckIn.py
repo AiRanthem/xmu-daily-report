@@ -219,7 +219,7 @@ def main():
     configs = get_configs()
     logger.info(f"已配置 {len(configs)} 个账号")
     for config in configs:
-        logger.info(f"账号【{config['username']} 正在运行")
+        logger.info(f"账号【{config['username']}】正在运行")
         for i in range(1, 2 if debug else 11):
             logger.info(f'第{i}次尝试')
             try:
@@ -229,7 +229,7 @@ def main():
                     config["password_vpn"],
                     config['email'], False
                 )
-                return
+                break
             except RuntimeError:
                 logger.info("直连打卡失败，尝试VPN")
                 try:
@@ -239,7 +239,7 @@ def main():
                         config["password_vpn"],
                         config['email'], True
                     )
-                    return
+                    break
                 except Exception as e:
                     fail("尝试失败", "打卡失败", "", e, shutdown=False)
         fail(f"账号【{config['username']}】重试10次后依然打卡失败，请排查日志",
