@@ -44,6 +44,24 @@
 
 如果对文档写作有任何意见与建议，请与作者联系。
 
+## 如何贡献代码
+本项目自3.x版本已经完全重构，如果使用过程中发现填写有问题，请阅读 [脚本文件](XMUAutoCheckIn.py) 寻找标注有 **开发者注意**
+注释的代码段落进行简单修改即可。目前的一个示例如下：
+
+![](image/contribute.png)
+
+在此示例中，开发者只需要定位到缺漏的下拉选项的XPATH，进行添加，测试通过后即可提交PR。
+
+### 如何测试
+本项目经过3.X重构后，开发者如果想要本地测试代码，请按照以下步骤进行配置：
+1. 在项目根目录建立`config.json`文件
+2. 在`config.json`文件中写入 [编辑Secrets](#3-配置Secrets) 章节中的配置字符串
+3. 设置环境变量`ENV`为值`debug`，建议通过熟悉的IDE的运行设置实现
+4. 去 [edge官网](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) 下载最新的web driver，重命名为 
+   `MicrosoftWebDriver` 并添加到`PATH`中
+5. `pip install selenium requests`
+6. 直接运行[脚本文件](XMUAutoCheckIn.py)。此时脚本在最后一步是否确认保存处选择否，无需担心运行前后打卡状态变更，可以多次测试。
+
 ## 更新日志
 
 ### 2022/3/26 3.0重磅更新！
@@ -60,6 +78,8 @@
 + 2021/08/18 简化配置过程，支持多账号打卡。
 + 2021/11/09 更新直接打卡策略，现在尝试VPN登录失败后会直接访问xmuxg网站打卡
 + 2021/12/26 更新一小时内随机延迟
++ 2022/03/26 API更新，代码重构
++ 2022/03/27 逻辑更新，增强鲁棒性：在进行下拉框选择前会验证是否已经有填写内容
 
 ## 自动化打卡条件
 
@@ -131,12 +151,12 @@ Github上有您日后需要的所有复习资料、电子书、工具与数据�
 
 如果您不知道什么是文本编辑器，请按快捷键`Win+R`，输入 `notepad`。 记事本是Windows系统下最常用的文本编辑器。
 
-| 人数 | 链接
-|:---:|:---:
-|1|[单人链接](template/config1.json)
-|2|[双人链接](template/config2.json)
-|3|[三人链接](template/config3.json)
-|4|[四人链接](template/config4.json)
+| 人数  |              链接               |
+|:---:|:-----------------------------:|
+|  1  | [单人链接](template/config1.json) |
+|  2  | [双人链接](template/config2.json) |
+|  3  | [三人链接](template/config3.json) |
+|  4  | [四人链接](template/config4.json) |
 
 如果您懂什么是`json`字符串，或者善于寻找规律，应该能自己推理出更多人的链接配置如何写。
 

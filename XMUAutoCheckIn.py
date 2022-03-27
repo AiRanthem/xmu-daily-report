@@ -1,3 +1,4 @@
+import io
 import json
 import logging
 import os
@@ -29,6 +30,8 @@ chrome_options.add_argument('blink-settings=imagesEnabled=false')
 logging.basicConfig(level=logging.INFO,
                     format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
+log_stream = io.StringIO()
+logger.addHandler(logging.StreamHandler(log_stream))
 
 # consts
 VPN_LOGIN_URL = 'http://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/login'
@@ -37,10 +40,7 @@ DIRECT_LOGIN_URL = 'http://xmuxg.xmu.edu.cn/login'
 DIRECT_CHECKIN_URL = 'http://xmuxg.xmu.edu.cn/app/214'
 MAIL_SERVER_URL = 'http://120.77.39.85:8080/mail/daily_report'
 
-CHECKIN_FAIL = '打卡失败'
-CHECKIN_SUCCESS = '打卡成功'
-CHECKIN_DONE = '今日已打卡'
-FAIL = False
+NULL = '请选择'
 
 
 def random_second() -> int:
@@ -120,7 +120,7 @@ def checkin(username, passwd, passwd_vpn, email, use_vpn=True) -> None:
         user = logintab.find_element(By.ID, 'username')
         pwd = logintab.find_element(By.ID, 'password')
     except Exception as e:
-        logger.warning(e)
+        logger.error(e)
         driver.close()
         raise RuntimeError("XMUXG登录失败", e)
 
@@ -135,35 +135,34 @@ def checkin(username, passwd, passwd_vpn, email, use_vpn=True) -> None:
     # 开始工作
     click_given_xpath(driver, '//*[@id="mainM"]/div/div/div/div[1]/div[2]/div/div[3]/div[2]', "我的表单")
 
-    # 是否已打卡
-    if get_text(driver, "//*[@id='select_1582538939790']/div/div/span[1]", "打卡状态") == '请选择':
-        # 选择省市区
-        select_dropdown(driver,
-                        '//*[@id="address_1582538163410"]/div/div[1]/div/div',
-                        '//label[@title="福建省"][1]',
-                        "省")
-        select_dropdown(driver,
-                        '//*[@id="address_1582538163410"]/div/div[2]/div/div',
-                        '//label[@title="厦门市"][1]',
-                        "市")
-        select_dropdown(driver,
-                        '//*[@id="address_1582538163410"]/div/div[3]/div/div',
-                        '//label[@title="翔安区"][1]',
-                        "区")
-        # 承诺选择“是”
-        select_dropdown(driver,
-                        "//*[@id='select_1582538939790']/div/div",
-                        "/html/body/div[8]/ul/div/div[3]/li/label",
-                        "本人承诺")
+    """
+    开发者注意：如果发现新的下拉框可能需要填写，请在为dropdowns列表按照
+    下拉框XPATH     选项XPATH    下拉框描述
+    的顺序添加项并提交PR
+    """
+    dropdowns = [
+        ['//*[@id="address_1582538163410"]/div/div[1]/div/div', '//label[@title="福建省"][1]', '省'],
+        ['//*[@id="address_1582538163410"]/div/div[2]/div/div', '//label[@title="厦门市"][1]', '市'],
+        ['//*[@id="address_1582538163410"]/div/div[3]/div/div', '//label[@title="翔安区"][1]', '区'],
+        ["//*[@id='select_1582538939790']/div/div/span[1]", "/html/body/div[8]/ul/div/div[3]/li/label", '本人承诺']
+    ]
+    for dropdown in dropdowns:
+        if NULL in get_text(driver, dropdown[0], dropdown[2]):
+            select_dropdown(driver, *dropdown)
+            time.sleep(1)
+        else:
+            logger.info(f'{dropdown[2]} 已填写')
 
-        # 点击保存按钮
-        click_given_xpath(driver, "//span[starts-with(text(),'保存')][1]", "保存")
+    # 点击保存按钮
+    click_given_xpath(driver, "//span[starts-with(text(),'保存')][1]", "保存")
 
-        time.sleep(1)
-        # 保存确定
-        if not debug:
-            driver.switch_to.alert.accept()
-        time.sleep(1)
+    time.sleep(1)
+    # 保存确定
+    if not debug:
+        driver.switch_to.alert.accept()
+    else:
+        driver.switch_to.alert.dismiss()
+    time.sleep(1)
     driver.close()
     logger.info("打卡成功")
     send_mail(f"账号【{username}】打卡成功", "打卡成功", email)
@@ -175,7 +174,7 @@ def send_mail(msg: str, title: str, to: str):
             {"title": title, "body": msg, "dest": to}))
         return post
     else:
-        logger.error(msg)
+        logger.info(msg)
 
 
 CONFIG_KEYS = ["username", "password", "password_vpn", "email"]
@@ -244,7 +243,7 @@ def main():
 
 if __name__ == '__main__':
 
-    if not debug and time.localtime().tm_hour < 12:
+    if not debug and time.localtime().tm_hour < 11:
         time_start: int = unix_timestamp()
         time_end: int = time_start + random_second()
 
