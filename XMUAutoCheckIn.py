@@ -41,6 +41,7 @@ VPN_CHECKIN_URL = 'http://webvpn.xmu.edu.cn/https/77726476706e697374686562657374
 DIRECT_LOGIN_URL = 'http://xmuxg.xmu.edu.cn/login'
 DIRECT_CHECKIN_URL = 'http://xmuxg.xmu.edu.cn/app/214'
 MAIL_SERVER_URL = 'http://120.77.39.85:8080/mail/daily_report'
+PUSHPLUS_URL = 'http://www.pushplus.plus/send'
 
 NULL = '请选择'
 
@@ -176,6 +177,19 @@ def send_mail(msg: str, title: str, to: str):
         post = requests.post(MAIL_SERVER_URL, data=json.dumps(
             {"title": title, "body": msg, "dest": to}))
         return post
+    else:
+        logger.info(msg)
+        
+ 
+def send_notify(msg: str, title: str, topic: str):
+    msg += '\n\n【运行日志】\n' + log_stream.getvalue()
+    if not debug:
+        # token: config["token"], topic: config["topic"]
+        data = {"token": token, "title": title, "content": msg}
+        # data = {"token": token, "topic": topic, "title": title, "content": msg}
+        body = json.dumps(data).encode(encoding='utf-8')
+        headers = {'Content-Type': 'application/json'}
+        requests.post(PUSHPLUS_URL, data=body, headers=headers)
     else:
         logger.info(msg)
 
