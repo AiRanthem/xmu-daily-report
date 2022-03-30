@@ -44,24 +44,6 @@
 
 如果对文档写作有任何意见与建议，请与作者联系。
 
-## 如何贡献代码
-本项目自3.x版本已经完全重构，如果使用过程中发现填写有问题，请阅读 [脚本文件](XMUAutoCheckIn.py) 寻找标注有 **开发者注意**
-注释的代码段落进行简单修改即可。目前的一个示例如下：
-
-![](image/contribute.png)
-
-在此示例中，开发者只需要定位到缺漏的下拉选项的XPATH，进行添加，测试通过后即可提交PR。
-
-### 如何测试
-本项目经过3.X重构后，开发者如果想要本地测试代码，请按照以下步骤进行配置：
-1. 在项目根目录建立`config.json`文件
-2. 在`config.json`文件中写入 [编辑Secrets](#3-配置Secrets) 章节中的配置字符串
-3. 设置环境变量`ENV`为值`debug`，建议通过熟悉的IDE的运行设置实现
-4. 去 [edge官网](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) 下载最新的web driver，重命名为 
-   `MicrosoftWebDriver` 并添加到`PATH`中
-5. `pip install selenium requests`
-6. 直接运行[脚本文件](XMUAutoCheckIn.py)。此时脚本在最后一步是否确认保存处选择否，无需担心运行前后打卡状态变更，可以多次测试。
-
 ## 更新日志
 
 ### 2022/3/30 关于打卡地区的重要说明
@@ -233,6 +215,24 @@ Pull Request操作其实就是在仓库间进行同步，将右侧仓库的内�
 收到`XMU每日打卡`发送的打卡失败邮件
 
 > 可能因为意外发生了错误，请今天暂时手动打卡。如果连续多天发生打卡失败，可能仓库需要更新，请参考章节[更新](#更新)
+
+## 如何贡献代码
+本项目自3.x版本已经完全重构，如果使用过程中发现填写有问题，请阅读 [脚本文件](XMUAutoCheckIn.py) 寻找标注有 **开发者注意**
+注释的代码段落进行简单修改即可。目前的一个示例如下：
+
+![](image/contribute.png)
+
+在此示例中，开发者只需要定位到缺漏的下拉选项的XPATH，进行添加，测试通过后即可提交PR。
+
+### 如何测试
+本项目经过3.X重构后，开发者如果想要本地测试代码，请按照以下步骤进行配置：
+1. 在项目根目录建立`config.json`文件
+2. 在`config.json`文件中写入 [编辑Secrets](#3-配置Secrets) 章节中的配置字符串
+3. 设置环境变量`ENV`为值`debug`，建议通过熟悉的IDE的运行设置实现
+4. 去 [edge官网](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) 下载最新的web driver，重命名为 
+   `MicrosoftWebDriver` 并添加到`PATH`中
+5. `pip install selenium requests`
+6. 直接运行[脚本文件](XMUAutoCheckIn.py)。此时脚本在最后一步是否确认保存处选择否，无需担心运行前后打卡状态变更，可以多次测试。
 
 ## 如何与维护者联系
 
