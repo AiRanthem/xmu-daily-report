@@ -1,13 +1,9 @@
-import io
-import json
-import logging
-import os
-import time
-import traceback
-from typing import List, Callable
-
-import random
 import calendar
+import json
+import os
+import random
+import time
+from typing import List, Callable
 
 import requests
 from selenium import webdriver
@@ -15,6 +11,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.chrome.webdriver import WebDriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
+
+from log import logger, get_log_string
 
 debug = os.getenv("ENV") == "debug"
 
@@ -26,23 +24,11 @@ chrome_options.add_argument('--hide-scrollbars')
 # 不加载图片, 提升速度
 chrome_options.add_argument('blink-settings=imagesEnabled=false')
 
-# 日志配置
-logging.basicConfig(level=logging.INFO,
-                    format='%(asctime)s - [%(levelname)s] - %(message)s')
-logger = logging.getLogger(__name__)
-log_stream = io.StringIO()
-handler = logging.StreamHandler(log_stream)
-handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-logger.addHandler(handler)
-
 # consts
 VPN_LOGIN_URL = 'http://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/login'
 VPN_CHECKIN_URL = 'http://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/app/214'
 DIRECT_LOGIN_URL = 'http://xmuxg.xmu.edu.cn/login'
 DIRECT_CHECKIN_URL = 'http://xmuxg.xmu.edu.cn/app/214'
-MAIL_SERVER_URL = 'http://120.77.39.85:8080/mail/daily_report'
-
-NULL = '请选择'
 
 
 def random_second() -> int:
@@ -53,32 +39,6 @@ def unix_timestamp() -> int:
     gmt = time.gmtime()
     ts: int = calendar.timegm(gmt)
     return ts
-
-
-def must_operate_element_by_xpath(driver: WebDriver, xpath: str, do: Callable, comment: str):
-    try:
-        target = WebDriverWait(driver, 10).until(
-            lambda x: x.find_element(By.XPATH, xpath))
-        result = do(target)
-        logger.info(f"{comment} 成功")
-        return result
-    except Exception as e:
-        driver.close()
-        fail(f"{comment} 失败", "", "", e, False, True)
-
-
-def click_given_xpath(driver: WebDriver, xpath: str, comment: str):
-    must_operate_element_by_xpath(driver, xpath, lambda x: x.click(), "点击 " + comment)
-
-
-def get_text(driver: WebDriver, xpath: str, comment: str) -> str:
-    return must_operate_element_by_xpath(driver, xpath, lambda x: x.text, f"获取 {comment} 文本")
-
-
-def select_dropdown(driver: WebDriver, dropdown_xpath: str, target_xpath: str, comment: str):
-    click_given_xpath(driver, dropdown_xpath, f"{comment} 下拉框")
-    time.sleep(1)
-    click_given_xpath(driver, target_xpath, f"{comment} 选项")
 
 
 def checkin(username, passwd, passwd_vpn, email, use_vpn=True) -> None:
@@ -160,40 +120,20 @@ def checkin(username, passwd, passwd_vpn, email, use_vpn=True) -> None:
 
     time.sleep(1)
     # 保存确定
-    if not debug:
-        driver.switch_to.alert.accept()
-    else:
-        driver.switch_to.alert.dismiss()
+    try:
+        if not debug:
+            driver.switch_to.alert.accept()
+        else:
+            driver.switch_to.alert.dismiss()
+    except Exception as e:
+        fail("存在没有正确填写的部分，请向作者反馈", "打卡失败", email, e, shutdown=False, run_fail=True)
     time.sleep(1)
     driver.close()
     logger.info("打卡成功")
     send_mail(f"账号【{username}】打卡成功", "打卡成功", email)
 
 
-def send_mail(msg: str, title: str, to: str):
-    msg += '\n\n【运行日志】\n' + log_stream.getvalue()
-    if not debug:
-        post = requests.post(MAIL_SERVER_URL, data=json.dumps(
-            {"title": title, "body": msg, "dest": to}))
-        return post
-    else:
-        logger.info(msg)
-
-
 CONFIG_KEYS = ["username", "password", "password_vpn", "email"]
-
-
-def fail(msg: str, title: str, email: str = "", e: Exception = None, shutdown=True, run_fail=False):
-    logger.error(msg)
-    if e is not None:
-        logger.error(e)
-        traceback.print_exc()
-    if run_fail:
-        raise RuntimeError(msg)
-    if shutdown:
-        send_mail(msg, title, email)
-        exit(0)
-
 
 def get_configs() -> List[dict]:
     try:
@@ -211,7 +151,7 @@ def get_configs() -> List[dict]:
                          "配置错误", run_fail=True)
         return configs
     except Exception as e:
-        fail("配置读取失败，请检查配置", "配置错误", e=e, run_fail=True)
+        fail("配置读取失败，请检查配置", "配置错误", e=e, shutdown=True)
 
 
 def main():
@@ -231,8 +171,8 @@ def main():
                 )
                 success = True
                 break
-            except RuntimeError:
-                logger.info("直连打卡失败，尝试VPN")
+            except Exception as e:
+                fail("直连打卡失败，尝试VPN", "打卡失败", "", e, shutdown=False)
                 try:
                     checkin(
                         config["username"],
