@@ -159,13 +159,25 @@ Github上有您日后需要的所有复习资料、电子书、工具与数据�
 
 如果您懂什么是`json`字符串，或者善于寻找规律，应该能自己推理出更多人的链接配置如何写。
 
-下图是一个单人链接的示例：
+下面是一个单人链接的示例：
 
-![](image/ex_1.png)
-
-下图是一个双人链接的示例：
-
-![](image/ex2.png)
+```json
+{
+  "config": [
+    {
+      "username": "101202111012345",
+      "password": "mypassword",
+      "password_vpn": "mypassword",
+      "email": "example@qq.com",
+      "district": "思明区",
+      "inschool": "在校",
+      "campus": "思明校区",
+      "building": "思明白城07",
+      "room": "0301"
+    }
+  ]
+}
+```
 
 ### 3. 配置Secrets
 
