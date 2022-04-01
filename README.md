@@ -185,7 +185,7 @@ Github上有您日后需要的所有复习资料、电子书、工具与数据�
 
 ![](image/settings.png)
 
-点击左侧的 `Secrets` ，在新的页面中点击右上角的 `New repository secret`
+点击左侧的 `Secrets` / `Actions` ，在新的页面中点击右上角的 `New repository secret`
 
 ![](image/secrets.png)
 
