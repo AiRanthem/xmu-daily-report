@@ -13,7 +13,6 @@ class Config:
         self.district = ''
         self.inschool = ''
         self.campus = ''
-        self.stay = ''
         self.building = ''
         self.room = ''
 
