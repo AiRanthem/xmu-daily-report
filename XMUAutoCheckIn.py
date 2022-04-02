@@ -124,12 +124,17 @@ def get_configs() -> List[Config]:
     else:
         return make_configs(os.getenv("CONFIG"))
 
+def mask_stu_num(stu_num: str) -> str:
+    # XMU学号为14位
+    # mask仅应用于log信息
+    return stu_num[0] + '*' * 9 + stu_num[10:]
 
 def main():
     configs = get_configs()
     logger.info(f"已配置 {len(configs)} 个账号")
     for cfg in configs:
-        logger.info(f"账号【{cfg.username}】正在运行")
+        username_mask = mask_stu_num(cfg.username)
+        logger.info(f"账号【{username_mask}】正在运行")
         success = False
         for i in range(1, 2 if debug else 11):
             logger.info(f'第{i}次尝试')
@@ -148,7 +153,7 @@ def main():
                 except Exception as e:
                     fail("尝试失败", "打卡失败", "", e, shutdown=False)
         if not success:
-            fail(f"账号【{cfg.username}】重试10次后依然打卡失败，请排查日志",
+            fail(f"账号【{username_mask}】重试10次后依然打卡失败，请排查日志",
                  "打卡失败", cfg.email, shutdown=False)
 
 
