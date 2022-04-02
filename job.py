@@ -10,8 +10,6 @@ from log import logger
 from utils import fail
 
 NULL = '请选择'
-browser = webdriver.get()
-
 
 def must_operate_element(driver: WebDriver, by: str, target: str, do: Callable, comment: str):
     try:
@@ -122,72 +120,72 @@ class ClickJob(Job):
         click_given_xpath(self.driver, self.xpath, self.comment)
 
 
-def click_mytable() -> Job:
-    return ClickJob(browser, '//*[@id="mainM"]/div/div/div/div[1]/div[2]/div/div[3]/div[2]', "我的表单")
+def click_mytable(webdriver) -> Job:
+    return ClickJob(webdriver, '//*[@id="mainM"]/div/div/div/div[1]/div[2]/div/div[3]/div[2]', "我的表单")
 
 
-def dropdown_province(data: str) -> Job:
-    return DropdownJob(browser, '//*[@id="address_1582538163410"]/div/div[1]/div/div',
+def dropdown_province(webdriver, data: str) -> Job:
+    return DropdownJob(webdriver, '//*[@id="address_1582538163410"]/div/div[1]/div/div',
                        f'//label[@title="{data}"][1]', '省')
 
 
-def dropdown_city(data: str) -> Job:
-    return DropdownJob(browser, '//*[@id="address_1582538163410"]/div/div[2]/div/div', f'//label[@title="{data}"][1]',
+def dropdown_city(webdriver, data: str) -> Job:
+    return DropdownJob(webdriver, '//*[@id="address_1582538163410"]/div/div[2]/div/div', f'//label[@title="{data}"][1]',
                        '市')
 
 
-def dropdown_district(data: str) -> Job:
-    return DropdownJob(browser, '//*[@id="address_1582538163410"]/div/div[3]/div/div',
+def dropdown_district(webdriver, data: str) -> Job:
+    return DropdownJob(webdriver, '//*[@id="address_1582538163410"]/div/div[3]/div/div',
                        f'//label[@title="{data}"][1]',
                        '区')
 
 
-def dropdown_confirm() -> Job:
-    return DropdownJob(browser, "//*[@id='select_1582538939790']/div/div/span[1]", "/html/body/div[8]/ul/div/div["
+def dropdown_confirm(webdriver) -> Job:
+    return DropdownJob(webdriver, "//*[@id='select_1582538939790']/div/div/span[1]", "/html/body/div[8]/ul/div/div["
                                                                                    "3]/li/label", '本人承诺')
 
 
-def dropdown_inschool(data: str) -> Job:
-    return DropdownJob(browser, '//*[@id="select_1611108284522"]/div/div', f'//label[@title="{data}"][1]', "是否在校")
+def dropdown_inschool(webdriver, data: str) -> Job:
+    return DropdownJob(webdriver, '//*[@id="select_1611108284522"]/div/div', f'//label[@title="{data}"][1]', "是否在校")
 
 
-def dropdown_campus(data: str) -> Job:
-    return DropdownJob(browser, '//*[@id="select_1582538643070"]/div/div/span[1]',
+def dropdown_campus(webdriver, data: str) -> Job:
+    return DropdownJob(webdriver, '//*[@id="select_1582538643070"]/div/div/span[1]',
                        f'//label[starts-with(@title, "{data}")][1]',
                        "校区")
 
 
-def dropdown_stay_in_school(data: str) -> Job:
-    return DropdownJob(browser, '//*[@id="select_1611110401193"]/div/div',
+def dropdown_stay_in_school(webdriver, data: str) -> Job:
+    return DropdownJob(webdriver, '//*[@id="select_1611110401193"]/div/div',
                        f'//label[starts-with(@title, "{data}")][1]',
                        "是否住在校内")
 
 
-def dropdown_indorm(data: str) -> Job:
-    return DropdownJob(browser, '//*[@id="select_1611108377024"]/div/div',
+def dropdown_indorm(webdriver, data: str) -> Job:
+    return DropdownJob(webdriver, '//*[@id="select_1611108377024"]/div/div',
                        f'//label[starts-with(@title, "{data}")][1]',
                        "是否住在校内学生宿舍")
 
 
-def dropdown_building(data: str) -> Job:
-    return DropdownJob(browser, '//*[@id="select_1611108445364"]/div/div',
+def dropdown_building(webdriver, data: str) -> Job:
+    return DropdownJob(webdriver, '//*[@id="select_1611108445364"]/div/div',
                        f'//label[starts-with(@title, "{data}")][1]',
                        "楼栋")
 
 
-def text_room(data: str) -> Job:
-    return TextJob(browser, '//*[@id="input_1611108449736"]/input', data, "房间号")
+def text_room(webdriver, data: str) -> Job:
+    return TextJob(webdriver, '//*[@id="input_1611108449736"]/input', data, "房间号")
 
 
-def drowdown_live_in_xiamen(data: str) -> Job:
-    return DropdownJob(browser, '//*[@id="radio_1611108503484"]/div/div',
+def drowdown_live_in_xiamen(webdriver, data: str) -> Job:
+    return DropdownJob(webdriver, '//*[@id="radio_1611108503484"]/div/div',
                        f'//label[starts-with(@title, "{data}")][1]',
                        "是否家在厦门")
 
 
-def text_address(data: str) -> Job:
-    return TextJob(browser, '//*[@id="input_1611108489669"]/input', data, "校外住址")
+def text_address(webdriver, data: str) -> Job:
+    return TextJob(webdriver, '//*[@id="input_1611108489669"]/input', data, "校外住址")
 
 
-def click_save() -> Job:
-    return ClickJob(browser, "//span[starts-with(text(),'保存')][1]", "保存")
+def click_save(webdriver) -> Job:
+    return ClickJob(webdriver, "//span[starts-with(text(),'保存')][1]", "保存")

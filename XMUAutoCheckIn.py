@@ -57,21 +57,21 @@ class Checker:
         self.driver.get(self.checkin_url)
         logger.info("进入打卡页面")
         click_given_xpath(self.driver, '//*[@id="mainM"]/div/div/div/div[1]/div[2]/div/div[3]/div[2]', "我的表单")
-        job = click_mytable()
+        job = click_mytable(self.driver)
         job.add_child(
-            dropdown_province("福建省"),
-            dropdown_city("厦门市"),
-            dropdown_district(self.config.district),
-            dropdown_inschool(self.config.inschool).add_child(
-                dropdown_campus(self.config.campus),
-                dropdown_stay_in_school("住校内"),
-                dropdown_indorm("住校内学生宿舍"),
-                dropdown_building(self.config.building),
-                text_room(self.config.room)
+            dropdown_province(self.driver, "福建省"),
+            dropdown_city(self.driver, "厦门市"),
+            dropdown_district(self.driver, self.config.district),
+            dropdown_inschool(self.driver, self.config.inschool).add_child(
+                dropdown_campus(self.driver, self.config.campus),
+                dropdown_stay_in_school(self.driver, "住校内"),
+                dropdown_indorm(self.driver, "住校内学生宿舍"),
+                dropdown_building(self.driver, self.config.building),
+                text_room(self.driver, self.config.room)
             ) if self.config.inschool.startswith("在校") else
-            dropdown_inschool(self.config.inschool),
-            dropdown_confirm(),
-            click_save()
+            dropdown_inschool(self.driver, self.config.inschool),
+            dropdown_confirm(self.driver),
+            click_save(self.driver)
         )
         try:
             job.do()
