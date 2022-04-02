@@ -149,7 +149,7 @@ def main():
                     fail("尝试失败", "打卡失败", "", e, shutdown=False)
         if not success:
             fail(f"账号【{cfg.username}】重试10次后依然打卡失败，请排查日志",
-                 "打卡失败", cfg.email)
+                 "打卡失败", cfg.email, shutdown=False)
 
 
 if __name__ == '__main__':
