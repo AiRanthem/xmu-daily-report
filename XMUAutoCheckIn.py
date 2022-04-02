@@ -75,6 +75,7 @@ class Checker:
         )
         try:
             job.do()
+            self.driver.switch_to.alert.accept() if debug else self.driver.switch_to.alert.dismiss()
         except NoAlertPresentException as e:
             fail("存在没有正确填写的部分，请向作者反馈", "打卡失败", self.config.email, e, shutdown=False, run_fail=True)
         except Exception as unknown_error:
