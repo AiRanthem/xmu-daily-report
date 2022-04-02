@@ -11,18 +11,10 @@ chrome_options.add_argument('--disable-gpu')
 chrome_options.add_argument('--hide-scrollbars')
 # 不加载图片, 提升速度
 chrome_options.add_argument('blink-settings=imagesEnabled=false')
+# 不启动浏览器界面
+chrome_options.add_argument('--headless')
 
-if debug:
-    driver = webdriver.Edge()
-else:
-    driver = webdriver.Chrome(options=chrome_options)
-
-driver.maximize_window()
-
-
-def get() -> WebDriver:
-    return driver
-
-
-def close():
-    driver.close()
+def get_webdriver() -> WebDriver:
+    _webdriver = webdriver.Edge() if debug else webdriver.Chrome(options=chrome_options)
+    _webdriver.maximize_window()
+    return _webdriver
