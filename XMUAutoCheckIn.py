@@ -110,7 +110,7 @@ def main():
                     break
                 try:
                     checker = Checker(cfg, use_vpn=True)
-                    checker.checkin()
+                    checker.workflow()
                     success = True
                     break
                 except Exception as e:
