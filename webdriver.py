@@ -12,7 +12,7 @@ chrome_options.add_argument('--hide-scrollbars')
 # 不加载图片, 提升速度
 chrome_options.add_argument('blink-settings=imagesEnabled=false')
 # 不启动浏览器界面
-chrome_options.add_argument('--headless')
+# chrome_options.add_argument('--headless')
 
 def get_webdriver() -> WebDriver:
     _webdriver = webdriver.Edge() if debug else webdriver.Chrome(options=chrome_options)
