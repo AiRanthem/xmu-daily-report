@@ -1,20 +1,16 @@
-import calendar
-import os
-import random
 import time
-from typing import List
 
 from selenium.webdriver.common.by import By
+from selenium.common.exceptions import NoAlertPresentException
 from selenium.webdriver.support.wait import WebDriverWait
 
 import webdriver
-from config import Config, make_configs
+from config import Config, get_configs
 from job import click_given_xpath, click_mytable, dropdown_province, dropdown_city, dropdown_district, dropdown_confirm, \
     dropdown_inschool, dropdown_campus, dropdown_stay_in_school, dropdown_building, text_room, dropdown_indorm, \
     click_save
 from log import logger
-from utils import fail, send_mail, debug
-from webdriver import close
+from utils import fail, send_mail, mask_stu_num, random_second, unix_timestamp, debug
 
 # consts
 VPN_LOGIN_URL = 'http://webvpn.xmu.edu.cn/https/77726476706e69737468656265737421e8fa5484207e705d6b468ca88d1b203b/login'
@@ -22,119 +18,91 @@ VPN_CHECKIN_URL = 'http://webvpn.xmu.edu.cn/https/77726476706e697374686562657374
 DIRECT_LOGIN_URL = 'http://xmuxg.xmu.edu.cn/login'
 DIRECT_CHECKIN_URL = 'http://xmuxg.xmu.edu.cn/app/214'
 
+class Checker:
+    '''
+    单账户打卡器
+    '''
+    def __init__(self, config: Config, use_vpn: bool):
+        self.driver = webdriver.get_webdriver()
+        self.use_vpn = use_vpn
+        self.config = config
 
-def random_second() -> int:
-    return random.randrange(start=0, stop=3600, step=1)
+        self.masked_stu_num = mask_stu_num(self.config.username)
+        self.login_url = VPN_LOGIN_URL if use_vpn else DIRECT_LOGIN_URL
+        self.checkin_url = VPN_CHECKIN_URL if use_vpn else DIRECT_CHECKIN_URL
+        self.children = []
+    
+        logger.info(f"账号【{self.masked_stu_num}】正在运行")
+        logger.info("准备工作完成")
+        self.driver.get(self.login_url)
 
+    def login_vpn(self):
+        logger.info("尝试使用VPN登录")
+        login_tab = self.driver.find_element(By.CLASS_NAME, 'login-box')
+        login_tab.find_element(By.XPATH, '//*[@id="user_name"]').send_keys(self.config.username)
+        login_tab.find_element(By.XPATH, '//*[@id="form"]/div[3]/div/input').send_keys(self.config.password_vpn)
+        WebDriverWait(self.driver, 10).until(lambda x: x.find_element(By.XPATH, '//*[@id="login"]')).click()
+        logger.info("VPN登录成功")
 
-def unix_timestamp() -> int:
-    gmt = time.gmtime()
-    ts: int = calendar.timegm(gmt)
-    return ts
-
-
-def checkin(cfg: Config, use_vpn=True) -> None:
-    login_url = VPN_LOGIN_URL if use_vpn else DIRECT_LOGIN_URL
-    checkin_url = VPN_CHECKIN_URL if use_vpn else DIRECT_CHECKIN_URL
-    driver = webdriver.get()
-    logger.info("准备工作完成")
-
-    # 进入登录页面
-    logger.info("正在请求登录页面")
-    driver.get(login_url)
-
-    if use_vpn:
-        # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
-        logintab = driver.find_element(By.CLASS_NAME, 'login-box')
-        login = WebDriverWait(driver, 10).until(
-            lambda x: x.find_element(By.ID, 'login'))
-        user = logintab.find_element(By.ID, 'user_name')
-        pwd = logintab.find_element(
-            By.XPATH,
-            "//*[@id='form']/div[3]/div/input")
-        user.send_keys(cfg.username)
-        pwd.send_keys(cfg.password_vpn)
-        login.click()
-        logger.info("VPN登录完成")
-        time.sleep(1)
-
-    # 选择统一身份认证登录跳转到真正的登录页面
-    click_given_xpath(driver, '//*[@id="loginLayout"]/div[3]/div[2]/div/button[3]', "统一身份认证")
-
-    # 查找页面元素，如果某些元素查找不到则返回错误
-    try:
+    def login_xmuxg(self):
         logger.info("进入XMUXG登录页面")
-        logintab = driver.find_element(By.CLASS_NAME, 'auth_tab_content')
-        login = WebDriverWait(driver, 10).until(
-            lambda x: x.find_element(By.XPATH, "//*[@id='casLoginForm']/p[4]/button"))
-        user = logintab.find_element(By.ID, 'username')
-        pwd = logintab.find_element(By.ID, 'password')
-    except Exception as e:
-        logger.error(e)
-        raise RuntimeError("XMUXG登录失败", e)
-
-    # 输入用户名密码并点击登录
-    user.send_keys(cfg.username)
-    pwd.send_keys(cfg.password)
-    login.click()
-
-    # 重新跳转到打卡页面
-    driver.get(checkin_url)
-
-    # 开始工作
-    click_given_xpath(driver, '//*[@id="mainM"]/div/div/div/div[1]/div[2]/div/div[3]/div[2]', "我的表单")
-
-    job = click_mytable()
-    job.add_child(
-        dropdown_province("福建省"),
-        dropdown_city("厦门市"),
-        dropdown_district(cfg.district),
-        dropdown_inschool(cfg.inschool).add_child(
-            dropdown_campus(cfg.campus),
-            dropdown_stay_in_school("住校内"),
-            dropdown_indorm("住校内学生宿舍"),
-            dropdown_building(cfg.building),
-            text_room(cfg.room)
-        ) if cfg.inschool.startswith("在校") else
-        dropdown_inschool(cfg.inschool),
-        dropdown_confirm(),
-        click_save()
-    )
-    job.do()
-
-    try:
-        if not debug:
-            driver.switch_to.alert.accept()
+        click_given_xpath(self.driver, '//*[@id="loginLayout"]/div[3]/div[2]/div/button[3]', "统一身份认证")
+        login_tab = self.driver.find_element(By.CLASS_NAME, 'auth_tab_content')
+        login_tab.find_element(By.XPATH, '//*[@id="username"]').send_keys(self.config.username)
+        login_tab.find_element(By.XPATH, '//*[@id="password"]').send_keys(self.config.password)
+        WebDriverWait(self.driver, 10).until(lambda x: x.find_element(By.XPATH, "//*[@id='casLoginForm']/p[4]/button")).click()
+        logger.info("XMUXG登录成功")
+    
+    def checkin(self):
+        self.driver.get(self.checkin_url)
+        logger.info("进入打卡页面")
+        click_given_xpath(self.driver, '//*[@id="mainM"]/div/div/div/div[1]/div[2]/div/div[3]/div[2]', "我的表单")
+        job = click_mytable(self.driver)
+        job.add_child(
+            dropdown_province(self.driver, "福建省"),
+            dropdown_city(self.driver, "厦门市"),
+            dropdown_district(self.driver, self.config.district),
+            dropdown_inschool(self.driver, self.config.inschool).add_child(
+                dropdown_campus(self.driver, self.config.campus),
+                dropdown_stay_in_school(self.driver, "住校内"),
+                dropdown_indorm(self.driver, "住校内学生宿舍"),
+                dropdown_building(self.driver, self.config.building),
+                text_room(self.driver, self.config.room)
+            ) if self.config.inschool.startswith("在校") else
+            dropdown_inschool(self.driver, self.config.inschool),
+            dropdown_confirm(self.driver),
+            click_save(self.driver)
+        )
+        try:
+            job.do()
+            self.driver.switch_to.alert.accept() if debug else self.driver.switch_to.alert.dismiss()
+        except NoAlertPresentException as e:
+            fail("存在没有正确填写的部分，请向作者反馈", "打卡失败", self.config.email, e, shutdown=False, run_fail=True)
+        except Exception as unknown_error:
+            fail("未知错误", "打卡失败", self.config.email, unknown_error, shutdown=False, run_fail=True)
         else:
-            driver.switch_to.alert.dismiss()
-    except Exception as e:
-        fail("存在没有正确填写的部分，请向作者反馈", "打卡失败", cfg.email, e, shutdown=False, run_fail=True)
-    time.sleep(1)
-    logger.info("打卡成功")
-    send_mail(f"账号【{cfg.username}】打卡成功", "打卡成功", cfg.email)
-
-
-CONFIG_KEYS = ["username", "password", "password_vpn", "email"]
-
-
-def get_configs() -> List[Config]:
-    if debug:
-        with open("config.json", encoding="utf8") as f:
-            return make_configs(f.read())
-    else:
-        return make_configs(os.getenv("CONFIG"))
-
+            logger.info("打卡成功")
+            send_mail(f"账号【{self.masked_stu_num}】打卡成功", "打卡成功", self.config.email)
+        finally:
+            if not debug:
+                self.driver.close()
+    
+    def workflow(self):
+        if self.use_vpn:
+            self.login_vpn()
+        self.login_xmuxg()
+        self.checkin()
 
 def main():
     configs = get_configs()
     logger.info(f"已配置 {len(configs)} 个账号")
     for cfg in configs:
-        logger.info(f"账号【{cfg.username}】正在运行")
         success = False
         for i in range(1, 2 if debug else 11):
             logger.info(f'第{i}次尝试')
             try:
-                checkin(cfg, False)
+                checker = Checker(cfg, use_vpn=False)
+                checker.workflow()
                 success = True
                 break
             except Exception as e:
@@ -142,13 +110,14 @@ def main():
                 if debug:
                     break
                 try:
-                    checkin(cfg, True)
+                    checker = Checker(cfg, use_vpn=True)
+                    checker.workflow()
                     success = True
                     break
                 except Exception as e:
                     fail("尝试失败", "打卡失败", "", e, shutdown=False)
         if not success:
-            fail(f"账号【{cfg.username}】重试10次后依然打卡失败，请排查日志",
+            fail(f"账号【{checker.masked_stu_num}】重试10次后依然打卡失败，请排查日志",
                  "打卡失败", cfg.email, shutdown=False)
 
 
@@ -161,8 +130,4 @@ if __name__ == '__main__':
         while True:
             if unix_timestamp() > time_end:
                 break
-    try:
-        main()
-    finally:
-        if not debug:
-            close()
+    main()
