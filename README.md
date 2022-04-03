@@ -55,10 +55,6 @@
 
 ## 更新日志
 
-### 2022/3/30 关于打卡地区的重要说明（已过期）
-
-思明校区同学请阅读 [Issue #20](https://github.com/AiRanthem/xmu-daily-report/issues/20) 修改地区为“思明区”。
-
 ### 2022/4/1 4.0重磅更新！
 
 3.X版本已不可用，请用户尽早升级4.0版本
@@ -73,6 +69,7 @@
 + 2021/12/26 更新一小时内随机延迟
 + 2022/03/26 API更新，代码重构
 + 2022/03/27 逻辑更新，增强鲁棒性：在进行下拉框选择前会验证是否已经有填写内容
++ 2022/04/01 面向对象重构，可以覆盖更加复杂的场景
 
 ## 自动化打卡条件
 
@@ -159,13 +156,25 @@ Github上有您日后需要的所有复习资料、电子书、工具与数据�
 
 如果您懂什么是`json`字符串，或者善于寻找规律，应该能自己推理出更多人的链接配置如何写。
 
-下图是一个单人链接的示例：
+下面是一个单人链接的示例：
 
-![](image/ex_1.png)
-
-下图是一个双人链接的示例：
-
-![](image/ex2.png)
+```json
+{
+  "config": [
+    {
+      "username": "101202111012345",
+      "password": "mypassword",
+      "password_vpn": "mypassword",
+      "email": "example@qq.com",
+      "district": "思明区",
+      "inschool": "在校",
+      "campus": "思明校区",
+      "building": "思明白城07",
+      "room": "0301"
+    }
+  ]
+}
+```
 
 ### 3. 配置Secrets
 
@@ -173,7 +182,7 @@ Github上有您日后需要的所有复习资料、电子书、工具与数据�
 
 ![](image/settings.png)
 
-点击左侧的 `Secrets` ，在新的页面中点击右上角的 `New repository secret`
+点击左侧的 `Secrets` / `Actions` ，在新的页面中点击右上角的 `New repository secret`
 
 ![](image/secrets.png)
 
