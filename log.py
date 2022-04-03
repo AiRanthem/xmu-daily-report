@@ -12,4 +12,6 @@ logger.addHandler(handler)
 
 
 def get_log_string() -> str:
-    return log_stream.getvalue()
+    txt = log_stream.getvalue()
+    log_stream.truncate(0)
+    return txt
