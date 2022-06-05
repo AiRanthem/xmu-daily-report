@@ -15,9 +15,7 @@ steps:
       CONFIG_B64:
         from_secret: xdr_config_b64
     commands:
-      - bash
-      - export CONFIG=`echo $CONFIG_B64 | base64 -d`
-      - echo $CONFIG
+      - bash drone-run.sh
 #      - sudo apt update
 #      - sudo apt install -y --no-install-recommends python3-pip
 #      - pip3 install -r requirements.txt --no-cache-dir
