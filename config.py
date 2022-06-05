@@ -28,4 +28,5 @@ def make_configs(json_str: str) -> List[Config]:
             cfgs.append(c)
         return cfgs
     except Exception as e:
+        print(json_str)
         fail("配置读取失败，请检查配置", "配置错误", e=e, shutdown=True)
