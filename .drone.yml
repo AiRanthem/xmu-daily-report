@@ -1,13 +1,21 @@
 kind: pipeline
 type: docker
 name: default
+trigger:
+  branch:
+    - master
+  event:
+    - push
+    - cron
 steps:
   - name: checkin
     image: selenium/standalone-chrome:latest
     environment:
-
+      - CONFIG:
+          from_secret: CONFIG
     commands:
-      - sudo apt update
-      - sudo apt install -y --no-install-recommends python3-pip
-      - pip3 install -r requirements.txt --no-cache-dir
-      - python3 XMUAutoCheckIn.py
+      - echo $CONFIG
+#      - sudo apt update
+#      - sudo apt install -y --no-install-recommends python3-pip
+#      - pip3 install -r requirements.txt --no-cache-dir
+#      - python3 XMUAutoCheckIn.py
