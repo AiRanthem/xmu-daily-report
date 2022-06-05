@@ -15,6 +15,7 @@ steps:
       CONFIG_B64:
         from_secret: xdr_config_b64
     commands:
+      - bash
       - export CONFIG=`echo $CONFIG_B64 | base64 -d`
       - echo $CONFIG
 #      - sudo apt update
