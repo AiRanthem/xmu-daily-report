@@ -15,7 +15,7 @@ steps:
       CONFIG_B64:
         from_secret: xdr_config_b64
     commands:
-      - export CONFIG = $(echo $CONFIG_B64 | base64 -d)
+      - export CONFIG=`echo $CONFIG_B64 | base64 -d`
       - echo $CONFIG
 #      - sudo apt update
 #      - sudo apt install -y --no-install-recommends python3-pip
