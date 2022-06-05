@@ -11,7 +11,8 @@ steps:
   - name: checkin
     image: selenium/standalone-chrome:latest
     environment:
-      from_secret: CONFIG
+      CONFIG:
+        from_secret: CONFIG
     commands:
       - echo $CONFIG
 #      - sudo apt update
