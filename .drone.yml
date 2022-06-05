@@ -11,6 +11,7 @@ steps:
   - name: checkin
     image: selenium/standalone-chrome:latest
     environment:
+      TZ: Asia/Shanghai
       CONFIG:
         from_secret: CONFIG
     commands:
