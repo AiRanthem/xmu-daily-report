@@ -241,7 +241,7 @@ Pull Request操作其实就是在仓库间进行同步，将右侧仓库的内�
 
 ### 如何修改定时打卡的时间
 
-本项目默认定时打卡时间为早上8：30，但由于服务器延迟，实测在九点甚至十点才会打卡成功。如需修改打卡时间，请修改[XMU_Auto_Check_In.yml](.github/workflows/XMU_Auto_Check_In.yml)内的'cron'参数，详见注释。
+本项目默认定时打卡时间为早上8：30，但由于引入了一个小时的随机时间，实际在九点左右才会打卡成功。如需修改打卡时间，请修改[XMU_Auto_Check_In.yml](.github/workflows/XMU_Auto_Check_In.yml)内的'cron'参数，详见注释。
 
 ## 如何贡献代码
 4.X版本贡献方法请阅读[job.py](./job.py)
