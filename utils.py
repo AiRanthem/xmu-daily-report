@@ -30,3 +30,7 @@ def fail(msg: str, title: str, email: str = "", e: Exception = None, shutdown=Tr
         send_mail(msg, title, email)
     if shutdown:
         exit(0)
+
+
+def mask_username(username: str) -> str:
+    return f"{username[:3]} **** {username[-3:]}"

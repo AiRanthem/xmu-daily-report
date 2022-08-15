@@ -125,13 +125,20 @@ def click_mytable() -> Job:
     return ClickJob(webdriver.get(), '//*[@id="mainM"]/div/div/div/div[1]/div[2]/div/div[3]/div[2]', "我的表单")
 
 
+def dropdown_covid_test() -> Job:
+    return DropdownJob(webdriver.get(), '//*[@id="datetime_1660308822369"]/div',
+                       '//div[@class="datepicker-dateRange"]/span[@class="datepicker-dateRange-item-active"]',
+                       "核酸时间")
+
+
 def dropdown_province(data: str) -> Job:
     return DropdownJob(webdriver.get(), '//*[@id="address_1582538163410"]/div/div[1]/div/div',
                        f'//label[@title="{data}"][1]', '省')
 
 
 def dropdown_city(data: str) -> Job:
-    return DropdownJob(webdriver.get(), '//*[@id="address_1582538163410"]/div/div[2]/div/div', f'//label[@title="{data}"][1]',
+    return DropdownJob(webdriver.get(), '//*[@id="address_1582538163410"]/div/div[2]/div/div',
+                       f'//label[@title="{data}"][1]',
                        '市')
 
 
@@ -142,12 +149,14 @@ def dropdown_district(data: str) -> Job:
 
 
 def dropdown_confirm() -> Job:
-    return DropdownJob(webdriver.get(), "//*[@id='select_1582538939790']/div/div/span[1]", "/html/body/div[8]/ul/div/div["
-                                                                                   "3]/li/label", '本人承诺')
+    return DropdownJob(webdriver.get(), "//*[@id='select_1582538939790']/div/div/span[1]",
+                       "/html/body/div[8]/ul/div/div["
+                       "3]/li/label", '本人承诺')
 
 
 def dropdown_inschool(data: str) -> Job:
-    return DropdownJob(webdriver.get(), '//*[@id="select_1611108284522"]/div/div', f'//label[@title="{data}"][1]', "是否在校")
+    return DropdownJob(webdriver.get(), '//*[@id="select_1611108284522"]/div/div', f'//label[@title="{data}"][1]',
+                       "是否在校")
 
 
 def dropdown_campus(data: str) -> Job:
