@@ -1,10 +1,14 @@
 {
   "config": [
     {
+      "username": "请在这里输入您的学号，保留引号",
+      "password": "请在这里输入您的统一身份认证密码，保留引号",
+      "password_vpn": "请在这里输入您的WiFi/VPN密码，保留引号",
+      "email": "请在这里输入您的邮箱地址，保留引号"
       "username": "30920211154143",
       "password": "Cao220033",
       "password_vpn": "Cao220033",
       "email": "1725837330@qq.com"
     }
   ]
-}
+} 
