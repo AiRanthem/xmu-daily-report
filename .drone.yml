@@ -1,0 +1,21 @@
+kind: pipeline
+type: docker
+name: default
+trigger:
+  branch:
+    - master
+  event:
+    - push
+    - cron
+steps:
+  - name: checkin
+    image: selenium/standalone-chrome:latest
+    environment:
+      TZ: Asia/Shanghai
+      CONFIG_B64:
+        from_secret: xdr_config_b64
+    commands:
+      - bash drone-run.sh
+
+node:
+  name: xw1_docker

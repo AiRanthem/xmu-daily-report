@@ -11,9 +11,9 @@ import webdriver
 from config import Config, make_configs
 from job import click_given_xpath, click_mytable, dropdown_province, dropdown_city, dropdown_district, dropdown_confirm, \
     dropdown_inschool, dropdown_campus, dropdown_stay_in_school, dropdown_building, text_room, dropdown_indorm, \
-    click_save
+    click_save, dropdown_covid_test
 from log import logger
-from utils import fail, send_mail, debug
+from utils import fail, send_mail, debug, mask_username
 from webdriver import close
 
 # consts
@@ -36,6 +36,7 @@ def unix_timestamp() -> int:
 def checkin(cfg: Config, use_vpn=True) -> None:
     login_url = VPN_LOGIN_URL if use_vpn else DIRECT_LOGIN_URL
     checkin_url = VPN_CHECKIN_URL if use_vpn else DIRECT_CHECKIN_URL
+    webdriver.refresh()
     driver = webdriver.get()
     logger.info("准备工作完成")
 
@@ -64,8 +65,9 @@ def checkin(cfg: Config, use_vpn=True) -> None:
     # 查找页面元素，如果某些元素查找不到则返回错误
     try:
         logger.info("进入XMUXG登录页面")
-        logintab = driver.find_element(By.CLASS_NAME, 'auth_tab_content')
-        login = WebDriverWait(driver, 10).until(
+        logintab = WebDriverWait(driver, 100).until(lambda x: x.find_element(By.CLASS_NAME, 'auth_tab_content'))
+        # logintab = driver.find_element(By.CLASS_NAME, 'auth_tab_content')
+        login = WebDriverWait(driver, 100).until(
             lambda x: x.find_element(By.XPATH, "//*[@id='casLoginForm']/p[4]/button"))
         user = logintab.find_element(By.ID, 'username')
         pwd = logintab.find_element(By.ID, 'password')
@@ -82,8 +84,6 @@ def checkin(cfg: Config, use_vpn=True) -> None:
     driver.get(checkin_url)
 
     # 开始工作
-    click_given_xpath(driver, '//*[@id="mainM"]/div/div/div/div[1]/div[2]/div/div[3]/div[2]', "我的表单")
-
     job = click_mytable()
     job.add_child(
         dropdown_province("福建省"),
@@ -97,6 +97,7 @@ def checkin(cfg: Config, use_vpn=True) -> None:
             text_room(cfg.room)
         ) if cfg.inschool.startswith("在校") else
         dropdown_inschool(cfg.inschool),
+        dropdown_covid_test(),
         dropdown_confirm(),
         click_save()
     )
@@ -129,7 +130,7 @@ def main():
     configs = get_configs()
     logger.info(f"已配置 {len(configs)} 个账号")
     for cfg in configs:
-        logger.info(f"账号【{cfg.username}】正在运行")
+        logger.info(f"账号【{mask_username(cfg.username)}】正在运行")
         success = False
         for i in range(1, 2 if debug else 11):
             logger.info(f'第{i}次尝试')
@@ -149,7 +150,7 @@ def main():
                     fail("尝试失败", "打卡失败", "", e, shutdown=False)
         if not success:
             fail(f"账号【{cfg.username}】重试10次后依然打卡失败，请排查日志",
-                 "打卡失败", cfg.email, shutdown=False)
+                 "打卡失败", cfg.email, shutdown=False, send=True)
 
 
 if __name__ == '__main__':

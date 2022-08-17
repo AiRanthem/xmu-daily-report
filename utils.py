@@ -20,12 +20,17 @@ def send_mail(msg: str, title: str, to: str):
         logger.info(msg)
 
 
-def fail(msg: str, title: str, email: str = "", e: Exception = None, shutdown=True, run_fail=False):
+def fail(msg: str, title: str, email: str = "", e: Exception = None, shutdown=True, run_fail=False, send=False):
     logger.error(msg)
     if e is not None:
         logger.error(e)
     if run_fail:
         raise RuntimeError(msg)
-    if shutdown:
+    if send:
         send_mail(msg, title, email)
+    if shutdown:
         exit(0)
+
+
+def mask_username(username: str) -> str:
+    return f"{username[:3]} **** {username[-3:]}"
