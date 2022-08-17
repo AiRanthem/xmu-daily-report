@@ -211,17 +211,16 @@ Github上有您日后需要的所有复习资料、电子书、工具与数据�
 
 ## 仓库维护
 
+### 删除
+
+进入fork后的仓库界面（github.com首页左侧的Repositories可以找到），Settings -> 拉到最下面 -> Delete this repository 即可删除仓库并关闭部署。
+
+如何升级脚本：如果有一定GitHub的使用经验，推荐按照文档中的pull request方式进行更新。如果使用pull request有障碍，
+可以按照关闭脚本的步骤删除仓库后，访问 https://github.com/AiRanthem/xmu-daily-report 进行重新配置。
+
 ### 更新
 
-根据[关闭页面后我如何再一次进入我的仓库副本](#关闭页面后我如何再一次进入我的仓库副本) 进入仓库副本中，点击导航栏的`Pull requests`，再点击绿色的`New pull request`按钮
-
-![](image/pr.png)
-
-按照下面的动图进行操作。唯一的注意点就是请让pull request左侧的是您的仓库副本，右侧是 `AiRanthem` 的原始仓库。
-
-Pull Request操作其实就是在仓库间进行同步，将右侧仓库的内容推送到左侧仓库中。理解了这一点就能记住箭头两侧如何选择。如果仓库名消失，请按照动图中演示的点击上方蓝色的`compare across forks`即可重新显示。
-
-![](image/update.gif)
+*更新最简单的方法是按照上面的步骤删除仓库后，访问主仓库[https://github.com/AiRanthem/xmu-daily-report](https://github.com/AiRanthem/xmu-daily-report)重新fork。*
 
 ## 疑难解答
 
