@@ -14,7 +14,7 @@ NULL = '请选择'
 
 def must_operate_element(driver: WebDriver, by: str, target: str, do: Callable, comment: str):
     try:
-        target = WebDriverWait(driver, 10).until(
+        target = WebDriverWait(driver, 100).until(
             lambda x: x.find_element(by, target))
         result = do(target)
         logger.info(f"{comment} 成功")
