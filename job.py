@@ -199,3 +199,7 @@ def text_address(data: str) -> Job:
 
 def click_save() -> Job:
     return ClickJob(webdriver.get(), "//span[starts-with(text(),'保存')][1]", "保存")
+
+
+def click_vpn_login_tab() -> Job:
+    return ClickJob(webdriver.get(), '//*[@id="local"]', "VPN选择账号登录")
