@@ -11,7 +11,7 @@ import webdriver
 from config import Config, make_configs
 from job import click_given_xpath, click_mytable, dropdown_province, dropdown_city, dropdown_district, dropdown_confirm, \
     dropdown_inschool, dropdown_campus, dropdown_stay_in_school, dropdown_building, text_room, dropdown_indorm, \
-    click_save, dropdown_covid_test
+    click_save, dropdown_covid_test, click_vpn_login_tab
 from log import logger
 from utils import fail, send_mail, debug, mask_username
 from webdriver import close
@@ -46,6 +46,7 @@ def checkin(cfg: Config, use_vpn=True) -> None:
 
     if use_vpn:
         # 首先登陆WebVPN，根据上面url在WebVPN登陆成功后会自动跳转打卡登录界面
+        click_vpn_login_tab().do()
         logintab = driver.find_element(By.CLASS_NAME, 'login-box')
         login = WebDriverWait(driver, 10).until(
             lambda x: x.find_element(By.ID, 'login'))
@@ -135,7 +136,7 @@ def main():
         for i in range(1, 2 if debug else 11):
             logger.info(f'第{i}次尝试')
             try:
-                checkin(cfg, False)
+                checkin(cfg, True)
                 success = True
                 break
             except Exception as e:

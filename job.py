@@ -14,7 +14,7 @@ NULL = '请选择'
 
 def must_operate_element(driver: WebDriver, by: str, target: str, do: Callable, comment: str):
     try:
-        target = WebDriverWait(driver, 10).until(
+        target = WebDriverWait(driver, 100).until(
             lambda x: x.find_element(by, target))
         result = do(target)
         logger.info(f"{comment} 成功")
@@ -199,3 +199,7 @@ def text_address(data: str) -> Job:
 
 def click_save() -> Job:
     return ClickJob(webdriver.get(), "//span[starts-with(text(),'保存')][1]", "保存")
+
+
+def click_vpn_login_tab() -> Job:
+    return ClickJob(webdriver.get(), '//*[@id="local"]', "VPN选择账号登录")
