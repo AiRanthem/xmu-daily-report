@@ -136,7 +136,7 @@ def main():
         for i in range(1, 2 if debug else 11):
             logger.info(f'第{i}次尝试')
             try:
-                checkin(cfg, True)
+                checkin(cfg, False)
                 success = True
                 break
             except Exception as e:
