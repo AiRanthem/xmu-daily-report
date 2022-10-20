@@ -53,12 +53,12 @@
 
 ## 更新日志
 
-### 2022/4/1 4.0重磅更新！
+### 2022/8/15 4.1更新
 
-3.X版本已不可用，请用户尽早升级4.0版本
+3.X版本已不可用，请用户尽早升级4.X版本
 
-1. 对各种操作进行进一步的面向对象封装，以面对以后更加复杂的逻辑变更
-2. 添加区、校区、宿舍等配置项，用户须参照[编辑配置文件](#2-编辑配置文件) 章节重新配置
+1. 自动选择核酸日期为当天
+2. 对日志中的账号进行屏蔽保护
 
 ### 日志
 
@@ -211,17 +211,15 @@ Github上有您日后需要的所有复习资料、电子书、工具与数据�
 
 ## 仓库维护
 
+### 删除
+
+进入fork后的仓库界面（github.com首页左侧的Repositories可以找到），Settings -> 拉到最下面 -> Delete this repository 即可删除仓库并关闭部署。
+
 ### 更新
 
-根据[关闭页面后我如何再一次进入我的仓库副本](#关闭页面后我如何再一次进入我的仓库副本) 进入仓库副本中，点击导航栏的`Pull requests`，再点击绿色的`New pull request`按钮
+**更新最简单的方法是按照上面的步骤删除仓库后，访问主仓库[https://github.com/AiRanthem/xmu-daily-report](https://github.com/AiRanthem/xmu-daily-report)重新fork。**
 
-![](image/pr.png)
-
-按照下面的动图进行操作。唯一的注意点就是请让pull request左侧的是您的仓库副本，右侧是 `AiRanthem` 的原始仓库。
-
-Pull Request操作其实就是在仓库间进行同步，将右侧仓库的内容推送到左侧仓库中。理解了这一点就能记住箭头两侧如何选择。如果仓库名消失，请按照动图中演示的点击上方蓝色的`compare across forks`即可重新显示。
-
-![](image/update.gif)
+同样欢迎使用PR的方式进行更新（鉴于大部分同学看不懂PR流程，文档里就删了）
 
 ## 疑难解答
 
@@ -252,7 +250,7 @@ Pull Request操作其实就是在仓库间进行同步，将右侧仓库的内�
 2. 在`config.json`文件中写入 [编辑Secrets](#3-配置Secrets) 章节中的配置字符串
 3. 设置环境变量`ENV`为值`debug`，建议通过熟悉的IDE的运行设置实现
 4. 去 [edge官网](https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/) 下载最新的web driver，重命名为 
-   `MicrosoftWebDriver` 并添加到`PATH`中
+   `msedgedriver` 并添加到`PATH`中
 5. `pip install selenium requests`
 6. 直接运行[脚本文件](XMUAutoCheckIn.py)。此时脚本在最后一步是否确认保存处选择否，无需担心运行前后打卡状态变更，可以多次测试。
 

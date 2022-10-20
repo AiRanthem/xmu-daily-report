@@ -4,8 +4,8 @@
 name: XMU_Auto_Check_In
 
 on:
-#  push:
-#    branches: [ main ]
+  push:
+    branches: [ master ]
   workflow_dispatch:
   schedule:
     - cron: '30 0 * * *'
@@ -30,9 +30,6 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Setup Chromedriver
       uses: nanasess/setup-chromedriver@master
-      with:
-        # Optional: do not specify to match Chrome's version
-        chromedriver-version: ''
     - name: Run the CheckIn Shell
       env:
           USERNAME: ${{ secrets.USERNAME }}
