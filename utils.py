@@ -33,4 +33,4 @@ def fail(msg: str, title: str, email: str = "", e: Exception = None, shutdown=Tr
 
 
 def mask_username(username: str) -> str:
-    return f"{username[:3]} **** {username[-3:]}"
+    return f"{username[:3]} **** {username[-2:]}"
